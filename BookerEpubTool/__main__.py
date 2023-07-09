@@ -54,12 +54,6 @@ def main():
     chs_parser.add_argument("-r", "--regex", help="regex for chapter title")
     chs_parser.set_defaults(func=ext_chs)
 
-    ck_zip_parser = subparsers.add_parser("crack-zip", help="crack encrypted zip")
-    ck_zip_parser.add_argument("fname", help="ZIP fname")
-    ck_zip_parser.add_argument("-p", "--pw", default=asset('PwdDic.txt'), help="password dict")
-    ck_zip_parser.add_argument("-t", "--threads", type=int, default=8, help="num of threads")
-    ck_zip_parser.set_defaults(func=crack_zip)
-
     fmt_para_parser = subparsers.add_parser("fmt-para", help="format epub paragraphs")
     fmt_para_parser.add_argument("fname", help="file name")
     fmt_para_parser.add_argument("-l", "--low", type=int, default=30, help="lower bound")
