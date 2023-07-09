@@ -6,14 +6,14 @@ from os import path
 
 def read_zip(fname):
     bio = BytesIO(open(fname, 'rb').read())
-    zip = zipfile.open(bio, 'r')
+    zip = zipfile.ZipFile(bio, 'r')
     fdict = {n:zip.read(n) for n in zip.namelist()}
     zip.close()
     return fdict
 
 def write_zip(fname, fdict):
     bio = BytesIO()
-    zip = zipfile.open(bio, 'w', zipfile.ZIP_DEFLATED)
+    zip = zipfile.ZipFile(bio, 'w', zipfile.ZIP_DEFLATED)
     for name, data in fdict.items():
         zip.writestr(name, data)
     zip.close()
