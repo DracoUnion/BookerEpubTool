@@ -13,7 +13,7 @@ def read_zip(fname):
 
 def write_zip(fname, fdict):
     bio = BytesIO()
-    zip = zipfile.open(bio, 'w')
+    zip = zipfile.open(bio, 'w', zipfile.ZIP_DEFLATED)
     for name, data in fdict.items():
         zip.writestr(name, data)
     zip.close()
