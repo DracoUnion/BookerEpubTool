@@ -67,7 +67,7 @@ def get_ncx_toc(toc_ncx, rgx="", hlv=0):
         ]
     return toc
 
-def get_epub_toc(args):
+def get_toc(args):
     fname = args.fname
     if not fname.endswith('.epub'):
         print('请提供 EPUB 文件')
@@ -111,7 +111,7 @@ def get_toc_and_content_path(zip):
     return (ncx_path, opf_path)
             
 
-def exp_epub_chs(args):
+def ext_chs(args):
     fname = args.fname
     rgx = args.regex
     hlv = args.hlevel

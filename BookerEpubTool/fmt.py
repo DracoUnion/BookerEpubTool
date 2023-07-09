@@ -2,7 +2,7 @@ import re
 from pyquery import PyQuery as pq
 from .util import *
 
-def format_para_epub(args):
+def format_para(args):
     fname = args.fname
     lo = args.low
     hi = args.high
@@ -14,13 +14,13 @@ def format_para_epub(args):
     for n, data in fdict.items():
         print(n)
         if n.endswith('.html'):
-            data = format_para(
+            data = format_para_html(
                 data.decode('utf8'), lo, hi).encode('utf8')
         
     write_zip(fname, fdict)
     print('done...')
 
-def format_para(html, lo, hi):
+def format_para_html(html, lo, hi):
     html = re.sub(r'<\?xml[^>]*\?>', '', html)
     rt = pq(html)
     el_ps = rt('p')

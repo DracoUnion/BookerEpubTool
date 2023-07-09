@@ -7,7 +7,7 @@ from pyquery import PyQuery as pq
 import re
 from .util import *
 
-def comp_epub(args):
+def compress(args):
     fname = args.file
     if fname.endswith('.mobi') or \
         fname.endswith('.azw3'):
