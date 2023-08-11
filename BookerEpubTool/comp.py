@@ -20,7 +20,7 @@ def compress(args):
     for name, data in fdict.items():
         print(name)
         if is_pic(name):
-            data = pngquant_bts(data)
+            fdict[name] = pngquant_bts(data)
             
 
         
