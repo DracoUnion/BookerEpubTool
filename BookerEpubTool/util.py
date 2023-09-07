@@ -102,7 +102,7 @@ def parse_ncx(ncx, base):
             'id': id_,
             'parent': parent_id,
             'order': int(order),
-            'text': text,
+            'title': text,
             'src': path.join(base, src).replace('\\', '/'),
             'level': get_nav_lv(el),
         })
