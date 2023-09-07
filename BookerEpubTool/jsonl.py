@@ -4,14 +4,20 @@ import json
 import subprocess as subp
 from .util import *
 
-def get_paras(html):
+def get_paras(html, ch=0):
     html = rm_xml_header(html)
     rt = pq(html)
     els = rt('p, h1, h2, h3, h4, h5, h6')
     paras = []
-    for el in els:
+    for i, el in enumerate(els):
         para = (pq(el).text() or '').strip()
-        paras.append(para)
+        lv = 0 if el.tag == 'p' else int(el.tag[1])
+        paras.append({
+            'chapter': ch,
+            'paragraph': i,
+            'content': para,
+            'level': lv,
+        })
     return paras
 
 def to_jsonl(args):
@@ -27,12 +33,7 @@ def to_jsonl(args):
     jsons = []
     for i, f in enumerate(fnames):
         html = fdict[f].decode('utf8')
-        paras = get_paras(html)
-        paras = [{
-            'content': p,
-            'chapter': i, 
-            "paragraph": j
-        } for j, p in enumerate(paras)]
+        paras = get_paras(html, i)
         jsons.append(paras)
     jsonl = '\n'.join(
         json.dumps(j, ensure_ascii=False).replace('\n', ' ') 
