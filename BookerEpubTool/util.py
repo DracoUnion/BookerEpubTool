@@ -128,12 +128,14 @@ def read_opf_ncx(fdict):
         raise ValueError(f'找不到 META 文件 [{meta_path}]') 
     meta = rm_xml_header(fdict[meta_path].decode('utf-8'))
     opf_path = pq(meta).find('rootfile').attr('full-path') or ''
+    if not opf_path:
+        raise ValueError(f'无法获取 OPF 文件路径')
     if opf_path not in fdict:
-        raise ValueError(f'找不到 OPF 文件路径')
+        raise ValueError(f'找不到 OPF 文件 [{opf_path}]')
     opf = fdict[opf_path].decode('utf-8')
     opf = parse_opf(opf, path.dirname(opf_path))
     if 'ncx' not in opf['items']:
-        raise ValueError('找不到 NCX 文件路径')
+        raise ValueError('无法获取 NCX 文件路径')
     ncx_path = opf['items']['ncx']
     if ncx_path not in fdict:
         raise ValueError(f'找不到 NCX 文件 [{ncx_path}]')
