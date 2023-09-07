@@ -33,7 +33,7 @@ def to_jsonl(args):
             'chapter': i, 
             "paragraph": j
         } for j, p in enumerate(paras)]
-        jsonl.append(paras)
+        jsons.append(paras)
     jsonl = '\n'.join(
         json.dumps(j, ensure_ascii=False).replace('\n', ' ') 
         for j in jsons
