@@ -31,7 +31,7 @@ def convert_to_epub(fname):
 
 def rm_xml_header(html):
     html = re.sub(r'<\?xml[^>]*\?>', '', html)
-    html = re.sub(r'xmlns(:\w+)=".+?"', '', html)
+    html = re.sub(r'xmlns(:\w+)?=".+?"', '', html)
     html = re.sub(r'<(/?)(\w+)', lambda m: '<' + m.group(1) + m.group(2).lower(), html)
     return html
 
@@ -104,6 +104,7 @@ def parse_ncx(ncx, base):
             'order': int(order),
             'text': text,
             'src': path.join(base, src).replace('\\', '/'),
+            'level': get_nav_lv(el),
         })
     nav.sort(key=lambda it: it['order'])
 
@@ -112,6 +113,14 @@ def parse_ncx(ncx, base):
         'title': title,
         'nav': nav
     }
+
+
+def get_nav_lv(el_nav):
+    cnt = 0
+    while el_nav and el_nav.is_('navpoint'):
+        cnt += 1
+        el_nav = el_nav.parent()
+    return cnt
 
 def read_opf_ncx(fdict):
     meta_path = 'META-INF/container.xml'
@@ -130,8 +139,5 @@ def read_opf_ncx(fdict):
         raise ValueError(f'找不到 NCX 文件 [{ncx_path}]')
     ncx = fdict[ncx_path].decode('utf8')
     ncx = parse_ncx(ncx, path.dirname(ncx_path))
-    return {
-        'opf': opf,
-        'ncx': ncx,
-    }
+    return (opf, ncx)
 

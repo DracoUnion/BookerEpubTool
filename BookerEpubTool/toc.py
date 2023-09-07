@@ -7,33 +7,15 @@ from pyquery import PyQuery as pq
 import re
 from .util import *
 
-def get_opf_flist(cont_opf):
-    cont_opf = re.sub(r'<\?xml[^>]*\?>', '', cont_opf)
-    cont_opf = re.sub(r'xmlns=".+?"', '', cont_opf)
-    rt = pq(cont_opf)
-    el_refs = rt('itemref')
-    ids = [
-        el_refs.eq(i).attr('idref') 
-        for i in range(len(el_refs))
-    ]
-    el_its = rt('item')
-    id_map = {
-        pq(el).attr('id'):
-        pq(el).attr('href')
-        for el in el_its
-    }
+def get_opf_flist(opf):
+    refs = opf['refs']
+    id_map = opf['items']
     return [
         id_map[id]
-        for id in ids
+        for id in refs
         if id in id_map
     ]
 
-def get_toc_lv(el_nav):
-    cnt = 0
-    while el_nav and el_nav.is_('nav'):
-        cnt += 1
-        el_nav = el_nav.parent()
-    return cnt
 
 def get_ncx_toc(toc_ncx, rgx="", hlv=0):
     toc_ncx = re.sub(r'<\?xml[^>]*\?>', '', toc_ncx)
@@ -68,6 +50,20 @@ def get_ncx_toc(toc_ncx, rgx="", hlv=0):
         ]
     return toc
 
+def filter_toc(toc, rgx, hlv):
+    for i, ch in enumerate(toc):
+        ch['idx'] = i
+    if rgx:
+        toc = [
+            ch for ch in toc 
+            if re.search(rgx, ch['title'])
+        ]
+    if hlv:
+        toc = [
+            ch for ch in toc 
+            if ch['level'] <= hlv
+        ]
+    return toc
 def get_toc(args):
     fname = args.fname
     if not fname.endswith('.epub'):
@@ -75,19 +71,15 @@ def get_toc(args):
         return
         
     fdict = read_zip(fname)
-    ncx_fname, _ = get_toc_and_content_path(fdict)
-    if ncx_fname is None:
-        print('未找到目录文件 toc.ncx')
-        return
-    toc_ncx = fdict[ncx_fname].decode('utf8')
-    toc = get_ncx_toc(toc_ncx, args.regex, args.hlevel)
+    _, ncx = read_opf_ncx(fdict)
+    toc = filter_toc(ncx['nav'], args.regex, args.hlevel)
     for i, ch in enumerate(toc):
         pref = '>' * (ch["level"] - 1)
         if pref: pref += ' '
         print(f'{pref}{i}-{ch["idx"]}：{ch["src"]}\n{pref}{ch["title"]}')
 
 def get_html_body(html):
-    html = re.sub(r'<\?xml[^>]*\?>', '', html)
+    html = rm_xml_header(html)
     rt = pq(html)
     return rt('body').html() if rt('body') else html
 
@@ -127,25 +119,17 @@ def ext_chs(args):
 
     # 获取目录和文件列表
     fdict = read_zip(fname)
-    ncx_fname, opf_fname = get_toc_and_content_path(fdict)
-    if ncx_fname is None:
-        print('未找到目录文件 toc.ncx')
-        return
-    toc_ncx = fdict[ncx_fname].decode('utf8')
-    cont_opf = fdict[opf_fname].decode('utf8')
-    toc = get_ncx_toc(toc_ncx, rgx, hlv)
-    flist = get_opf_flist(cont_opf)
+    opf, ncx = read_opf_ncx(fdict)
+    toc = filter_toc(ncx['nav'], args.regex, args.hlevel)
+    flist = get_opf_flist(opf)
     toc_flist = {
         re.sub(r'#.+$|\?.+$', '', ch['src']) 
         for ch in toc
     }
     # 按照目录合并文件
-    book_dir = path.dirname(opf_fname)
     chs = []
     for f in flist:
-        cont = fdict[
-            path.join(book_dir, f).replace('\\', '/')
-        ].decode('utf8')
+        cont = fdict[f].decode('utf8')
         cont = get_html_body(cont)
         if f in toc_flist:
             chs.append([cont])
