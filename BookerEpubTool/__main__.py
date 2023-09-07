@@ -23,6 +23,7 @@ from .util import *
 from .fmt import *
 from .comp import *
 from .toc import *
+from .jsonl import *
     
 def main():
     parser = argparse.ArgumentParser(prog="BookerEpubTool", description="iBooker EPUB tool", formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -58,6 +59,10 @@ def main():
     fmt_para_parser.add_argument("-l", "--low", type=int, default=30, help="lower bound")
     fmt_para_parser.add_argument("-u", "--high", type=int, default=35, help="upper bound")
     fmt_para_parser.set_defaults(func=format_para)
+
+    jsonl_parser = subparsers.add_parser("tojsonl", help="epub paragraphs to jsonl dataset")
+    jsonl_parser.add_argument("fname", help="file name")
+    jsonl_parser.set_defaults(func=to_jsonl)
 
     args = parser.parse_args()
     args.func(args)
