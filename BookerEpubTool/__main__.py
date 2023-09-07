@@ -23,7 +23,6 @@ from .util import *
 from .fmt import *
 from .comp import *
 from .toc import *
-from .zip_tool import *
     
 def main():
     parser = argparse.ArgumentParser(prog="BookerEpubTool", description="iBooker EPUB tool", formatter_class=argparse.RawDescriptionHelpFormatter)
