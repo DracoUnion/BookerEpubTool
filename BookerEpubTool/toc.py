@@ -7,15 +7,6 @@ from pyquery import PyQuery as pq
 import re
 from .util import *
 
-def get_opf_flist(opf):
-    refs = opf['refs']
-    id_map = opf['items']
-    return [
-        id_map[id]
-        for id in refs
-        if id in id_map
-    ]
-
 def filter_toc(toc, rgx, hlv):
     for i, ch in enumerate(toc):
         ch['idx'] = i
@@ -67,17 +58,17 @@ def ext_chs(args):
     fdict = read_zip(fname)
     opf, ncx = read_opf_ncx(fdict)
     toc = filter_toc(ncx['nav'], args.regex, args.hlevel)
-    flist = get_opf_flist(opf)
-    toc_flist = {
+    fnames = get_opf_text_fnames(opf)
+    toc_fnames = {
         re.sub(r'#.+$|\?.+$', '', ch['src']) 
         for ch in toc
     }
     # 按照目录合并文件
     chs = []
-    for f in flist:
+    for f in fnames:
         cont = fdict[f].decode('utf8')
         cont = get_html_body(cont)
-        if f in toc_flist:
+        if f in toc_fnames:
             chs.append([cont])
         else:
             if chs: chs[-1].append(cont)

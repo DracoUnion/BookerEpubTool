@@ -143,3 +143,11 @@ def read_opf_ncx(fdict):
     ncx = parse_ncx(ncx, path.dirname(ncx_path))
     return (opf, ncx)
 
+def get_opf_text_fnames(opf):
+    refs = opf['refs']
+    id_map = opf['items']
+    return [
+        id_map[id]
+        for id in refs
+        if id in id_map
+    ]
