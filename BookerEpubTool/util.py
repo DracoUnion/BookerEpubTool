@@ -57,7 +57,7 @@ def parse_opf(opf, base):
         el = pq(el)
         id_, href = el.attr('id'), el.attr('href')
         if id_ and href:
-            items[id_] =  path.join(base, href)
+            items[id_] = path.join(base, href).replace('\\', '/')
     
     refs = []
     el_refs = rt.find('itemref')
@@ -103,7 +103,7 @@ def parse_ncx(ncx, base):
             'parent': parent_id,
             'order': int(order),
             'text': text,
-            'src': path.join(base, src),
+            'src': path.join(base, src).replace('\\', '/'),
         })
     nav.sort(key=lambda it: it['order'])
 
@@ -113,7 +113,6 @@ def parse_ncx(ncx, base):
         'nav': nav
     }
 
-'''
 def read_opf_ncx(fdict):
     meta_path = 'META-INF/container.xml'
     if meta_path not in fdict:
@@ -122,6 +121,17 @@ def read_opf_ncx(fdict):
     opf_path = pq(meta).find('rootfile').attr('full-path') or ''
     if opf_path not in fdict:
         raise ValueError(f'找不到 OPF 文件路径')
-    opf = fdict[opf_path].decode('utf-8'))
+    opf = fdict[opf_path].decode('utf-8')
+    opf = parse_opf(opf, path.dirname(opf_path))
+    if 'ncx' not in opf['items']:
+        raise ValueError('找不到 NCX 文件路径')
+    ncx_path = opf['items']['ncx']
+    if ncx_path not in fdict:
+        raise ValueError(f'找不到 NCX 文件 [{ncx_path}]')
+    ncx = fdict[ncx_path].decode('utf8')
+    ncx = parse_ncx(ncx, path.dirname(ncx_path))
+    return {
+        'opf': opf,
+        'ncx': ncx,
+    }
 
-'''    
