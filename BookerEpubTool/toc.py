@@ -16,40 +16,6 @@ def get_opf_flist(opf):
         if id in id_map
     ]
 
-
-def get_ncx_toc(toc_ncx, rgx="", hlv=0):
-    toc_ncx = re.sub(r'<\?xml[^>]*\?>', '', toc_ncx)
-    toc_ncx = re.sub(r'(?<=<)ncx:', '', toc_ncx)
-    toc_ncx = re.sub(r'(?<=</)ncx:', '', toc_ncx)
-    toc_ncx = re.sub(r'xmlns=".+?"', '', toc_ncx)
-    toc_ncx = re.sub(r'<(/?)navLabel', r'<\1label', toc_ncx)
-    toc_ncx = re.sub(r'<(/?)navPoint', r'<\1nav', toc_ncx)
-    toc_ncx = re.sub(r'<(/?)navmap', r'<\1map', toc_ncx)
-    rt = pq(toc_ncx)
-    el_nps = rt('nav')
-    toc = []
-    for i in range(len(el_nps)):
-        el = el_nps.eq(i)
-        title = el.children('label>text').text()
-        src = el.children('content').attr('src')
-        toc.append({
-            'idx': i,
-            'title': title.strip(),
-            'src': src,
-            'level': get_toc_lv(el),
-        })
-    if rgx:
-        toc = [
-            ch for ch in toc 
-            if re.search(rgx, ch['title'])
-        ]
-    if hlv:
-        toc = [
-            ch for ch in toc 
-            if ch['level'] <= hlv
-        ]
-    return toc
-
 def filter_toc(toc, rgx, hlv):
     for i, ch in enumerate(toc):
         ch['idx'] = i
@@ -82,26 +48,6 @@ def get_html_body(html):
     html = rm_xml_header(html)
     rt = pq(html)
     return rt('body').html() if rt('body') else html
-
-def get_toc_and_content_path(fdict):
-    meta_path = 'META-INF/container.xml'
-    if meta_path not in fdict:
-        return (None, None)
-    meta = fdict[meta_path].decode('utf-8')
-    meta = re.sub(r'<\?xml[^>]*\?>', '', meta)
-    meta = re.sub(r'xmlns=".+?"', '', meta)
-    opf_path = pq(meta).find('rootfile').attr('full-path') or ''
-    if opf_path not in fdict:
-        return (None, None)
-    opf = fdict[opf_path].decode('utf-8')
-    opf = re.sub(r'<\?xml[^>]*\?>', '', opf)
-    opf = re.sub(r'xmlns=".+?"', '', opf)
-    ncx_path = pq(opf).find('item#ncx').attr('href') or ''
-    ncx_path = path.join(path.dirname(opf_path), ncx_path).replace('\\', '/')
-    if ncx_path not in fdict:
-        return (None, None)
-    return (ncx_path, opf_path)
-            
 
 def ext_chs(args):
     fname = args.fname
