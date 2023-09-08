@@ -44,7 +44,7 @@ def to_jsonl(args):
     ofname = fname[:-5] + '.jsonl'
     open(ofname, 'w', encoding='utf8').write(jsonl)
     bio = BytesIO()
-    zip = py7zr.SevenZipFile(bio, 'w', {'id': py7zr.FILTER_LZMA2})
+    zip = py7zr.SevenZipFile(bio, 'w', filters=[{'id': py7zr.FILTER_LZMA2}])
     zip.write(ofname, path.basename(ofname))
     zip.close()
     data = bio.getvalue()
