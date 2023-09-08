@@ -1,3 +1,4 @@
 pyquery
 EpubCrawler
 imgyaso
+py7zr

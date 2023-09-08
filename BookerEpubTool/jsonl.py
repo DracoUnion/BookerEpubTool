@@ -2,6 +2,8 @@ import os
 from os import path
 import json
 import subprocess as subp
+import py7zr
+from io import BytesIO
 from .util import *
 
 def get_paras(html, ch=0):
@@ -41,6 +43,12 @@ def to_jsonl(args):
     )
     ofname = fname[:-5] + '.jsonl'
     open(ofname, 'w', encoding='utf8').write(jsonl)
-    cmd = ['7z', 'a', '-mx9', ofname + '.7z', ofname]
-    subp.Popen(cmd, shell=True).communicate()
+    bio = BytesIO()
+    zip = py7zr.SevenZipFile(bio, 'w')
+    zip.write(ofname, ofname)
+    zip.close()
+    data = bio.getvalue()
+    # cmd = ['7z', 'a', '-mx9', ofname + '.7z', ofname]
+    # subp.Popen(cmd, shell=True).communicate()
     os.unlink(ofname)
+    open(ofname + '.7z', 'wb').write(data)
