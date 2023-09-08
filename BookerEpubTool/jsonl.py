@@ -41,14 +41,13 @@ def to_jsonl(args):
         json.dumps(j, ensure_ascii=False).replace('\n', ' ') 
         for j in jsons
     )
-    ofname = fname[:-5] + '.jsonl'
-    open(ofname, 'w', encoding='utf8').write(jsonl)
+    jsonl_fname = path.basename(fname)[:-5] + '.jsonl'
     bio = BytesIO()
     zip = py7zr.SevenZipFile(bio, 'w', filters=[{'id': py7zr.FILTER_LZMA2}])
-    zip.write(ofname, path.basename(ofname))
+    zip.writestr(jsonl, jsonl_fname)
     zip.close()
     data = bio.getvalue()
     # cmd = ['7z', 'a', '-mx9', ofname + '.7z', ofname]
     # subp.Popen(cmd, shell=True).communicate()
-    os.unlink(ofname)
-    open(ofname + '.7z', 'wb').write(data)
+    ofname = fname[:-5] + '.jsonl.7z'
+    open(ofname, 'wb').write(data)
