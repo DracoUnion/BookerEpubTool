@@ -51,3 +51,4 @@ def to_jsonl(args):
     # subp.Popen(cmd, shell=True).communicate()
     ofname = fname[:-5] + '.jsonl.7z'
     open(ofname, 'wb').write(data)
+    print(ofname)
