@@ -32,7 +32,7 @@ def convert_to_epub(fname):
 def rm_xml_header(html):
     html = re.sub(r'<\?xml[^>]*\?>', '', html)
     html = re.sub(r'xmlns(:\w+)?=".+?"', '', html)
-    html = re.sub(r'<(/?)(\w+)', lambda m: '<' + m.group(1) + m.group(2).lower(), html)
+    html = re.sub(r'</?\w+', lambda m: m.group().lower(), html)
     return html
 
 def parse_opf(opf, base):
