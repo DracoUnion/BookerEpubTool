@@ -72,7 +72,7 @@ def parse_opf(opf, base):
 
 def parse_ncx(ncx, base):
     ncx = rm_xml_header(ncx)
-    ncx = re.sub(r'(?<=<|/)ncx:', '', ncx)
+    ncx = re.sub(r'ncx:', '', ncx)
     rt = pq(ncx)
 
     el_metas = rt('head>meta')
