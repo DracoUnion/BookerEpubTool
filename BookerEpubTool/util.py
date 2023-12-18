@@ -37,7 +37,6 @@ def rm_xml_header(html):
 
 def parse_opf(opf, base):
     opf = rm_xml_header(opf)
-    opf = re.sub(r'(?<=<|/)ncx:', '', opf)
     rt = pq(opf)
     
     el_meta = rt.find('metadata')
@@ -73,6 +72,7 @@ def parse_opf(opf, base):
 
 def parse_ncx(ncx, base):
     ncx = rm_xml_header(ncx)
+    ncx = re.sub(r'(?<=<|/)ncx:', '', ncx)
     rt = pq(ncx)
 
     el_metas = rt('head>meta')
