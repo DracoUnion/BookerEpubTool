@@ -60,7 +60,7 @@ def parse_opf(opf, base):
             items[id_] = path.join(base, href).replace('\\', '/')
     if 'ncxtoc' in items:
         items['ncx'] = items['ncxtoc']
-        del items['ncx']
+        del items['ncxtoc']
     
     refs = []
     el_refs = rt.find('itemref')
