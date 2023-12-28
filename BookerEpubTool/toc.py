@@ -80,6 +80,6 @@ def ext_chs(args):
     ]
     l = len(str(len(chs)))
     for i, ch in enumerate(chs):
-        fname = path.join(dir, str(i).zfill(l) + '.html')
+        fname = path.join(dir, args.prefix + str(i).zfill(l) + '.html')
         open(fname, 'w', encoding='utf8').write(ch)
         

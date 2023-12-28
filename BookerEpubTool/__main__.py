@@ -52,6 +52,7 @@ def main():
     chs_parser.add_argument("-e", "--end", default=-1, type=int, help="ending index. -1 means all")
     chs_parser.add_argument("-l", "--hlevel", default=0, type=int, help="heading level, headings less than which will be revserved. 0 means all")
     chs_parser.add_argument("-r", "--regex", help="regex for chapter title")
+    chs_parser.add_argument("-p", "--prefix", default='', help="prefix")
     chs_parser.set_defaults(func=ext_chs)
 
     fmt_para_parser = subparsers.add_parser("fmt-para", help="format epub paragraphs")
