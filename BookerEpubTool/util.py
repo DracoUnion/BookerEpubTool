@@ -61,6 +61,9 @@ def parse_opf(opf, base):
     if 'ncxtoc' in items:
         items['ncx'] = items['ncxtoc']
         del items['ncxtoc']
+    if 'ncx' not in items and \
+       'OEBPS/toc.ncx' in items.values():
+        items['ncx'] = 'OEBPS/toc.ncx'
     
     refs = []
     el_refs = rt.find('itemref')
