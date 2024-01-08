@@ -4,6 +4,7 @@ import json
 import subprocess as subp
 import py7zr
 from io import BytesIO
+import yaml
 from .util import *
 
 '''
