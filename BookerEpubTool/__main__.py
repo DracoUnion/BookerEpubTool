@@ -61,9 +61,12 @@ def main():
     fmt_para_parser.add_argument("-u", "--high", type=int, default=35, help="upper bound")
     fmt_para_parser.set_defaults(func=format_para)
 
-    jsonl_parser = subparsers.add_parser("tojsonl", help="epub paragraphs to jsonl dataset")
-    jsonl_parser.add_argument("fname", help="file name")
-    jsonl_parser.set_defaults(func=to_jsonl)
+    chs2yaml_parser = subparsers.add_parser("mkds", help="epub paragraphs to yaml dataset")
+    chs2yaml_parser.add_argument("fname", help="file name")
+    chs2yaml_parser.add_argument("-t", "--title", default='h1', help="css selector for title")
+    chs2yaml_parser.add_argument("-p", "--paras", default='p', help="css selector for paragraphs")
+    chs2yaml_parser.add_argument("-w", "--whole", action='store_true', help="whether to parse body entirely as paragraphs")
+    chs2yaml_parser.set_defaults(func=make_dataset)
 
     args = parser.parse_args()
     args.func(args)

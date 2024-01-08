@@ -6,6 +6,7 @@ import py7zr
 from io import BytesIO
 from .util import *
 
+'''
 def get_paras(html, ch=0):
     html = rm_xml_header(html)
     rt = pq(html)
@@ -52,6 +53,7 @@ def to_jsonl(args):
     ofname = fname[:-5] + '.jsonl.7z'
     open(ofname, 'wb').write(data)
     print(ofname)
+'''
 
 def get_title_paras(html, args):
     rt = pq(html)
@@ -71,7 +73,7 @@ def get_title_paras(html, args):
         ]
     return {'title': title, 'paras': paras}
 
-def chs2yaml(args):
+def make_dataset(args):
     fname = args.fname
     if not path.isfile(fname) or \
         not fname.endswith('.epub'):
