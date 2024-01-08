@@ -52,3 +52,39 @@ def to_jsonl(args):
     ofname = fname[:-5] + '.jsonl.7z'
     open(ofname, 'wb').write(data)
     print(ofname)
+    
+def get_title_paras(html):
+    rt = pq(html)
+    title = (rt('h1').text() or '').strip()
+    paras = [
+        pq(el).text().strip()
+        for el in rt('p')
+    ]
+    return {'title': title, 'paras': paras}
+    
+def chs2yaml(args):
+    fname = args.fname
+    if not path.isfile(fname) or \
+        not fname.endswith('.epub'):
+        print('请提供 EPUB 文件')
+        return
+    print(fname)
+    fdict = read_zip(fname)
+    opf, _ = read_opf_ncx(fdict)
+    fnames = get_opf_text_fnames(opf)
+    htmls = [
+        fdict[fname].decode('utf8')
+        for fname in fnames
+    ]
+    chs = [
+        get_title_paras(html)
+        for html in htmls
+    ]
+    res = {
+        'title': chs[0]['title'],
+        'paras': chs[1:],
+    }
+    ofname = fname[:-5] + '.yaml'
+    open(ofname, 'wb').write(yaml.safe_dump(res, allow_unicode=True))
+    print(ofname)
+    
