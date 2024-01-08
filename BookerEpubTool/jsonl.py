@@ -38,7 +38,7 @@ def to_jsonl(args):
         paras = get_paras(html, i)
         jsons.append(paras)
     jsonl = '\n'.join(
-        json.dumps(j, ensure_ascii=False).replace('\n', ' ') 
+        json.dumps(j, ensure_ascii=False).replace('\n', ' ')
         for j in jsons
     )
     jsonl_fname = path.basename(fname)[:-5] + '.jsonl'
@@ -52,16 +52,25 @@ def to_jsonl(args):
     ofname = fname[:-5] + '.jsonl.7z'
     open(ofname, 'wb').write(data)
     print(ofname)
-    
-def get_title_paras(html):
+
+def get_title_paras(html, args):
     rt = pq(html)
-    title = (rt('h1').text() or '').strip()
-    paras = [
-        pq(el).text().strip()
-        for el in rt('p')
-    ]
+    el_title = rt(args.title).eq(0)
+    title = (el_title.text() or '').strip()
+    el_title.remove()
+    if args.whole:
+        paras = rt('body').text().split('\n')
+        paras = [
+            p.strip() for p in paras
+            if p.strip()
+        ]
+    else:
+        paras = [
+            pq(el).text().strip()
+            for el in rt(args.paras)
+        ]
     return {'title': title, 'paras': paras}
-    
+
 def chs2yaml(args):
     fname = args.fname
     if not path.isfile(fname) or \
@@ -77,7 +86,7 @@ def chs2yaml(args):
         for fname in fnames
     ]
     chs = [
-        get_title_paras(html)
+        get_title_paras(html, args)
         for html in htmls
     ]
     res = {
@@ -87,4 +96,4 @@ def chs2yaml(args):
     ofname = fname[:-5] + '.yaml'
     open(ofname, 'wb').write(yaml.safe_dump(res, allow_unicode=True))
     print(ofname)
-    
+
