@@ -73,6 +73,7 @@ def get_title_paras(html, args):
             pq(el).text().strip()
             for el in rt(args.paras)
         ]
+        paras = [p for p in paras if p]
     return {'title': title, 'paras': paras}
 
 def make_dataset(args):
@@ -95,7 +96,7 @@ def make_dataset(args):
     ]
     res = {
         'title': chs[0]['title'],
-        'paras': chs[1:],
+        'chs': chs[1:],
     }
     ofname = fname[:-5] + '.yaml'
     open(ofname, 'w', encoding='utf8').write(yaml.safe_dump(res, allow_unicode=True))
