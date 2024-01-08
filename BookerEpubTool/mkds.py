@@ -98,6 +98,6 @@ def make_dataset(args):
         'paras': chs[1:],
     }
     ofname = fname[:-5] + '.yaml'
-    open(ofname, 'wb').write(yaml.safe_dump(res, allow_unicode=True))
+    open(ofname, 'w', encoding='utf8').write(yaml.safe_dump(res, allow_unicode=True))
     print(ofname)
 
