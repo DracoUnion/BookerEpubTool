@@ -56,6 +56,7 @@ def to_jsonl(args):
 '''
 
 def get_title_paras(html, args):
+    html = rm_xml_header(html)
     rt = pq(html)
     el_title = rt(args.title).eq(0)
     title = (el_title.text() or '').strip()
