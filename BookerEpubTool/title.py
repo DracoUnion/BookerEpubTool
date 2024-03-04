@@ -11,7 +11,7 @@ def add_title(args):
     for it in ncx['nav']:
         title, src = it['title'], it['src']
         html = fdict[src].decode('utf8', 'ignore')
-        rt = pq(html)
+        rt = pq(rm_xml_header(html))
         if not rt.find('body').children().eq(0).is_('h1, h2, h3'):
             el = pq('<h1></h1>')
             el.text(title)
