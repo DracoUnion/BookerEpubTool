@@ -12,7 +12,9 @@ def add_title(args):
         title, src = it['title'], it['src']
         html = fdict[src].decode('utf8', 'ignore')
         rt = pq(rm_xml_header(html))
-        if not rt.find('body').children().eq(0).is_('h1, h2, h3'):
+        el_1st = rt.find('body').children().eq(0)
+        if not el_1st.is_('h1, h2, h3') or \
+           (el_1st.text() or '').strip() != title.strip():
             el = pq('<h1></h1>')
             el.text(title)
             rt.find('body').prepend(el)
