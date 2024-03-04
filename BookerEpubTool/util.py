@@ -97,7 +97,8 @@ def parse_ncx(ncx, base):
         el = pq(el)
         id_, order = el.attr('id'), el.attr('playOrder')
         if not (id_ and order): continue
-        el_text, el_cont = el.find('navlabel>text'), el.find('content')
+        el_text = el.children('navlabel').children('text')
+        el_cont = el.children('content')
         if not (len(el_text) and len(el_cont)): 
             continue
         text, src = el_text.text(), el_cont.attr('src')
