@@ -24,6 +24,7 @@ from .fmt import *
 from .comp import *
 from .toc import *
 from .mkds import *
+from .title import *
     
 def main():
     parser = argparse.ArgumentParser(prog="BookerEpubTool", description="iBooker EPUB tool", formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -67,6 +68,10 @@ def main():
     chs2yaml_parser.add_argument("-p", "--paras", default='p', help="css selector for paragraphs")
     chs2yaml_parser.add_argument("-w", "--whole", action='store_true', help="whether to parse body entirely as paragraphs")
     chs2yaml_parser.set_defaults(func=make_dataset)
+
+    add_title_parser = subparsers.add_parser("add-title", help="add title to epub")
+    add_title_parser.add_argument("fname", help="file name")
+    add_title_parser.set_defaults(func=add_title)
 
     args = parser.parse_args()
     args.func(args)
