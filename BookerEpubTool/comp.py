@@ -1,7 +1,7 @@
 from os import path
 from imgyaso import pngquant_bts
 import sys
-from EpubCrawler.util import is_pic, safe_mkdir, safe_rmdir
+from EpubCrawler.util import is_pic, safe_mkdir, safe_rmdir, opti_img
 import subprocess as subp
 from pyquery import PyQuery as pq
 import re
@@ -20,7 +20,7 @@ def compress(args):
     for name, data in fdict.items():
         print(name)
         if is_pic(name):
-            fdict[name] = pngquant_bts(data)
+            fdict[name] = opti_img(data, args.mode, args.color)
             
 
         
