@@ -75,13 +75,13 @@ def main():
     add_title_parser.add_argument("fname", help="file name")
     add_title_parser.set_defaults(func=add_title)
 
-    ext_htmls_parser = subparsers.add_parser("ext-htmls", help="add title to epub")
+    ext_htmls_parser = subparsers.add_parser("ext-htmls", help="export epub htmls")
     ext_htmls_parser.add_argument("fname", help="file name")
     ext_htmls_parser.add_argument("-o", '--output-dir', default='.', help="output dir")
     ext_htmls_parser.add_argument("-p", '--prefix', default='', help="prefix")
     ext_htmls_parser.set_defaults(func=ext_htmls)
 
-    ext_pics_parser = subparsers.add_parser("ext-pics", help="add title to epub")
+    ext_pics_parser = subparsers.add_parser("ext-pics", help="export epub pics")
     ext_pics_parser.add_argument("fname", help="file name")
     ext_pics_parser.add_argument("-o", '--output-dir', default='.', help="output dir")
     ext_pics_parser.set_defaults(func=ext_pics)
