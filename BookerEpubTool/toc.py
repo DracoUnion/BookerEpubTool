@@ -83,3 +83,42 @@ def ext_chs(args):
         fname = path.join(dir, args.prefix + str(i).zfill(l) + '.html')
         open(fname, 'w', encoding='utf8').write(ch)
         
+
+def ext_htmls(args):
+    fname = args.fname
+    if not fname.endswith('.epub'):
+        print('请提供 EPUB 文件')
+        return
+
+    # 获取目录和文件列表
+    fdict = read_zip(fname)
+    htmls = {
+        path.basename(name):data
+        for name, data in fdict.items()
+        if extname(name) in ['html', 'htm', 'xhtml']
+    }
+
+    for name, data in htmls.items():
+        print(name)
+        fname = path.join(args.dir, args.prefix + name)
+        open(fname, 'wb').write(data)
+    
+
+def ext_pics(args):
+    fname = args.fname
+    if not fname.endswith('.epub'):
+        print('请提供 EPUB 文件')
+        return
+
+    # 获取目录和文件列表
+    fdict = read_zip(fname)
+    pics = {
+        path.basename(name):data
+        for name, data in fdict.items()
+        if is_pic(name)
+    }
+
+    for name, data in pics.items():
+        print(name)
+        fname = path.join(args.dir, name)
+        open(fname, 'wb').write(data)

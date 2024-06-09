@@ -159,3 +159,15 @@ def get_opf_text_fnames(opf):
         for id in refs
         if id in id_map
     ]
+
+def extname(fname):
+    m = re.search(r'\.(\w+)$', fname.lower())
+    return m.group(1) if m else ''
+
+def is_pic(fname):
+    ext = [
+        'jpg', 'jpeg', 'jfif', 'png', 
+        'gif', 'tiff', 'webp'
+    ]
+    m = re.search(r'\.(\w+)$', fname.lower())
+    return bool(m and m.group(1) in ext)
