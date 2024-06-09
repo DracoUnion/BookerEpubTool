@@ -6,6 +6,8 @@ import subprocess as subp
 from pyquery import PyQuery as pq
 import re
 from .util import *
+import os
+import shutil
 
 def filter_toc(toc, rgx, hlv):
     for i, ch in enumerate(toc):
@@ -122,3 +124,26 @@ def ext_pics(args):
         print(name)
         fname = path.join(args.output_dir, name)
         open(fname, 'wb').write(data)
+
+def select_nocode(args):
+    fname = args.fname
+    if not fname.endswith('.epub'):
+        print('请提供 EPUB 文件')
+        return
+
+    # 获取目录和文件列表
+    fdict = read_zip(fname)
+    htmls = {
+        path.basename(name):data
+        for name, data in fdict.items()
+        if extname(name) in ['html', 'htm', 'xhtml']
+    }
+    nocode = all(
+        '</code>' not in data.decode('utf8', 'ignore') 
+        for data in htmls.values()
+    )
+    if nocode:
+        shutil.move(
+            args.fname, 
+            path.join(args.output_dir, path.basename(args.fname))
+        )

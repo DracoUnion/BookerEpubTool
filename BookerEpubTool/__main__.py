@@ -86,6 +86,11 @@ def main():
     ext_pics_parser.add_argument("-o", '--output-dir', default='.', help="output dir")
     ext_pics_parser.set_defaults(func=ext_pics)
 
+    sel_nocd_parser = subparsers.add_parser("sel-nocd", help="select epub with no code")
+    sel_nocd_parser.add_argument("fname", help="file name")
+    sel_nocd_parser.add_argument("-o", '--output-dir', default='.', help="output dir")
+    sel_nocd_parser.set_defaults(func=select_nocode)
+
     args = parser.parse_args()
     args.func(args)
 
