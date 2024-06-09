@@ -100,7 +100,7 @@ def ext_htmls(args):
 
     for name, data in htmls.items():
         print(name)
-        fname = path.join(args.dir, args.prefix + name)
+        fname = path.join(args.output_dir, args.prefix + name)
         open(fname, 'wb').write(data)
     
 
@@ -120,5 +120,5 @@ def ext_pics(args):
 
     for name, data in pics.items():
         print(name)
-        fname = path.join(args.dir, name)
+        fname = path.join(args.output_dir, name)
         open(fname, 'wb').write(data)
