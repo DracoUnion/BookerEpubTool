@@ -101,6 +101,7 @@ def ext_htmls(args):
     }
 
     for name, data in htmls.items():
+        name = re.sub(r'\.\w+$', '', name) + '.html'
         print(name)
         fname = path.join(args.output_dir, args.prefix + name)
         open(fname, 'wb').write(data)
