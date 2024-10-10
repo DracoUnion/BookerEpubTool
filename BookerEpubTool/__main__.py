@@ -84,6 +84,7 @@ def main():
     ext_pics_parser = subparsers.add_parser("ext-pics", help="export epub pics")
     ext_pics_parser.add_argument("fname", help="file name")
     ext_pics_parser.add_argument("-o", '--output-dir', default='.', help="output dir")
+    ext_pics_parser.add_argument("-p", '--prefix', default='', help="prefix")
     ext_pics_parser.set_defaults(func=ext_pics)
 
     sel_nocd_parser = subparsers.add_parser("sel-nocd", help="select epub with no code")

@@ -123,7 +123,7 @@ def ext_pics(args):
 
     for name, data in pics.items():
         print(name)
-        fname = path.join(args.output_dir, name)
+        fname = path.join(args.output_dir, args.prefix + name)
         open(fname, 'wb').write(data)
 
 def select_nocode(args):
