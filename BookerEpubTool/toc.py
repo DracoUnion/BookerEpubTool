@@ -59,6 +59,18 @@ def ext_chs(args):
     # 获取目录和文件列表
     fdict = read_zip(fname)
     opf, ncx = read_opf_ncx(fdict)
+
+    # 处理 ALLINONE 逻辑
+    if args.all_in_one:
+        cont = '\n'.join([
+            get_html_body(fdict[f].decode('utf8'))
+            for f in get_opf_text_fnames(opf)
+        ])
+        cont = f'<html><head></head><body>{cont}</body></html>' 
+        ofname = args.fname[:-5] + '.html'
+        open(ofname, 'w', encoding='utf8').write(cont)
+        return
+
     toc = filter_toc(ncx['nav'], args.regex, args.hlevel)
     fnames = get_opf_text_fnames(opf)
     toc_fnames = {
