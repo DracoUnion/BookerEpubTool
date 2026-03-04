@@ -4,15 +4,20 @@ import re
 import subprocess as subp
 from os import path
 from pyquery import PyQuery as pq
+from typing import *
 
-def read_zip(fname):
+FDict = Dict[str, bytes]
+OpfDict = Dict[str, Any]
+NcxDict = Dict[str, Any]
+
+def read_zip(fname: str) -> FDict:
     bio = BytesIO(open(fname, 'rb').read())
     zip = zipfile.ZipFile(bio, 'r')
     fdict = {n:zip.read(n) for n in zip.namelist()}
     zip.close()
     return fdict
 
-def write_zip(fname, fdict):
+def write_zip(fname: str, fdict: FDict):
     bio = BytesIO()
     zip = zipfile.ZipFile(bio, 'w', zipfile.ZIP_DEFLATED)
     for name, data in fdict.items():
@@ -29,13 +34,13 @@ def convert_to_epub(fname):
         raise FileNotFoundError(f'{nfname} not found')
     return nfname
 
-def rm_xml_header(html):
+def rm_xml_header(html: str) -> str:
     html = re.sub(r'<\?xml[^>]*\?>', '', html)
     html = re.sub(r'xmlns(:\w+)?=".+?"', '', html)
     html = re.sub(r'</?\w+', lambda m: m.group().lower(), html)
     return html
 
-def parse_opf(opf, base):
+def parse_opf(opf: str, base: str) -> OpfDict:
     opf = rm_xml_header(opf)
     rt = pq(opf)
     
@@ -76,7 +81,7 @@ def parse_opf(opf, base):
         'refs': refs,
     }
 
-def parse_ncx(ncx, base):
+def parse_ncx(ncx: str, base: str) -> NcxDict:
     ncx = ncx.replace('ncx:', '')
     ncx = rm_xml_header(ncx)
     rt = pq(ncx)
@@ -130,7 +135,7 @@ def get_nav_lv(el_nav):
         el_nav = el_nav.parent()
     return cnt
 
-def read_opf_ncx(fdict):
+def read_opf_ncx(fdict: Dict[str, bytes]) -> Tuple[OpfDict, NcxDict]:
     meta_path = 'META-INF/container.xml'
     if meta_path not in fdict:
         raise ValueError(f'找不到 META 文件 [{meta_path}]') 
