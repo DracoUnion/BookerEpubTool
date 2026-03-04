@@ -68,6 +68,7 @@ def ext_chs(args):
         ])
         cont = f'<html><head></head><body>{cont}</body></html>' 
         ofname = args.fname[:-5] + '.html'
+        print(ofname)
         open(ofname, 'w', encoding='utf8').write(cont)
         return
 
