@@ -19,7 +19,25 @@ pip install git+https://github.com/apachecn/BookerEpubTool
 ## 使用说明
 
 ```
-epub-tool -h
+usage: BookerEpubTool [-h] [-v] {comp,toc,ext-chs,fmt-para,mkds,add-title,ext-htmls,ext-pics,sel-nocd} ...
+
+iBooker EPUB tool
+
+positional arguments:
+  {comp,toc,ext-chs,fmt-para,mkds,add-title,ext-htmls,ext-pics,sel-nocd}
+    comp                compress epub
+    toc                 view epub toc
+    ext-chs             export epub chapters
+    fmt-para            format epub paragraphs
+    mkds                epub paragraphs to yaml dataset
+    add-title           add title to epub
+    ext-htmls           export epub htmls
+    ext-pics            export epub pics
+    sel-nocd            select epub with no code
+
+options:
+  -h, --help            show this help message and exit
+  -v, --version         show program's version number and exit
 ```
 
 ## 协议

@@ -2,9 +2,9 @@
 # -*- coding: utf-8 -*-
 
 """BookerEpubTool
-https://github.com/apachecn/BookerEpubTool"""
+https://github.com/DracoUnion/BookerEpubTool"""
 
 __author__ = "wizardforcel"
 __email__ = "wizard.z@qq.com"
 __license__ = "SATA"
-__version__ = "2023.7.9.1"
+__version__ = "2026.3.25.0"
