@@ -1,0 +1,75 @@
+[build-system]
+requires = ["setuptools>=61.0", "setuptools-scm>=8.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "BookerEpubTool"
+version = "2026.3.25.0"
+description = "iBooker/DracoUnion EPUB 工具"
+readme = "README.md"
+license = {text = "SATA"}
+authors = [
+    {name = "wizardforcel", email = "wizard.z@qq.com"},
+]
+keywords = [
+    "wiki",
+    "知识库",
+    "document",
+    "文档",
+    "crawler",
+    "爬虫",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Intended Audience :: End Users/Desktop",
+    "License :: Other/Proprietary License",
+    "Natural Language :: Chinese (Simplified)",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Internet :: WWW/HTTP",
+    "Topic :: Text Processing :: Markup :: HTML",
+    "Topic :: Software Development :: Documentation",
+    "Topic :: Software Development :: Localization",
+    "Topic :: Utilities",
+]
+requires-python = ">=3.6"
+dependencies = [
+    "pyquery",
+    "EpubCrawler",
+    "imgyaso",
+    "py7zr",
+    "pyyaml",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "build",
+    "twine",
+]
+
+[project.scripts]
+BookerEpubTool = "BookerEpubTool.__main__:main"
+epub-tool = "BookerEpubTool.__main__:main"
+
+[project.urls]
+Homepage = "https://github.com/DracoUnion/BookerEpubTool"
+Repository = "https://github.com/DracoUnion/BookerEpubTool"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["BookerEpubTool*"]
+
+[tool.setuptools.package-data]
+"*" = ["*"]
