@@ -158,6 +158,41 @@ def select_nocode(args):
     )
     if nocode:
         shutil.move(
-            args.fname, 
+            args.fname,
             path.join(args.output_dir, path.basename(args.fname))
         )
+
+def reg_subparser(subparsers):
+    toc_parser = subparsers.add_parser("toc", help="view epub toc")
+    toc_parser.add_argument("fname", help="fname")
+    toc_parser.add_argument("-l", "--hlevel", default=0, type=int, help="heading level, headings less than which will be revserved. 0 means all")
+    toc_parser.add_argument("-r", "--regex", help="regex for chapter title")
+    toc_parser.set_defaults(func=get_toc)
+
+    chs_parser = subparsers.add_parser("ext-chs", help="export epub chapters")
+    chs_parser.add_argument("fname", help="fname")
+    chs_parser.add_argument("-d", "--dir", default='.', help="output dir")
+    chs_parser.add_argument("-s", "--start", default=-1, type=int, help="starting index. -1 means all")
+    chs_parser.add_argument("-e", "--end", default=-1, type=int, help="ending index. -1 means all")
+    chs_parser.add_argument("-l", "--hlevel", default=0, type=int, help="heading level, headings less than which will be revserved. 0 means all")
+    chs_parser.add_argument("-r", "--regex", help="regex for chapter title")
+    chs_parser.add_argument("-p", "--prefix", default='', help="prefix")
+    chs_parser.add_argument("-a", "--all-in-one", action='store_true', help="whether all in one html")
+    chs_parser.set_defaults(func=ext_chs)
+
+    ext_htmls_parser = subparsers.add_parser("ext-htmls", help="export epub htmls")
+    ext_htmls_parser.add_argument("fname", help="file name")
+    ext_htmls_parser.add_argument("-o", '--output-dir', default='.', help="output dir")
+    ext_htmls_parser.add_argument("-p", '--prefix', default='', help="prefix")
+    ext_htmls_parser.set_defaults(func=ext_htmls)
+
+    ext_pics_parser = subparsers.add_parser("ext-pics", help="export epub pics")
+    ext_pics_parser.add_argument("fname", help="file name")
+    ext_pics_parser.add_argument("-o", '--output-dir', default='.', help="output dir")
+    ext_pics_parser.add_argument("-p", '--prefix', default='', help="prefix")
+    ext_pics_parser.set_defaults(func=ext_pics)
+
+    sel_nocd_parser = subparsers.add_parser("sel-nocd", help="select epub with no code")
+    sel_nocd_parser.add_argument("fname", help="file name")
+    sel_nocd_parser.add_argument("-o", '--output-dir', default='.', help="output dir")
+    sel_nocd_parser.set_defaults(func=select_nocode)

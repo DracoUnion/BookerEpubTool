@@ -22,3 +22,8 @@ def add_title(args):
             fdict[src] = html.encode('utf8')
 
     write_zip(args.fname, fdict)
+
+def reg_subparser(subparsers):
+    add_title_parser = subparsers.add_parser("add-title", help="add title to epub")
+    add_title_parser.add_argument("fname", help="file name")
+    add_title_parser.set_defaults(func=add_title)
