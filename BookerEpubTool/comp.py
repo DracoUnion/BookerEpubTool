@@ -28,8 +28,8 @@ def compress(args):
     print('done...')
 
 def reg_subparser(subparsers):
-    comp_parser = subparsers.add_parser("comp", help="compress epub")
-    comp_parser.add_argument("file", help="file")
-    comp_parser.add_argument("-m", "--mode", default='quant', help="mode")
-    comp_parser.add_argument("-c", "--color", type=int, default=8, help="num of colors")
+    comp_parser = subparsers.add_parser("comp", help="压缩 EPUB")
+    comp_parser.add_argument("file", help="文件")
+    comp_parser.add_argument("-m", "--mode", default='quant', help="压缩模式（quant/grid/trunc/thres）")
+    comp_parser.add_argument("-c", "--color", type=int, default=8, help="颜色数")
     comp_parser.set_defaults(func=compress)
