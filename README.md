@@ -32,7 +32,7 @@ python -m BookerEpubTool <命令> [参数]
 ## 使用说明
 
 ```
-usage: BookerEpubTool [-h] [-v] {comp,toc,ext-chs,ext-htmls,ext-pics,sel-nocd,fmt-para,mkds,add-title} ...
+usage: BookerEpubTool [-h] [-v] [公共参数] {comp,toc,ext-chs,ext-htmls,ext-pics,sel-nocd,fmt-para,mkds,add-title,trans} ...
 ```
 
 支持以下子命令：
@@ -48,8 +48,9 @@ usage: BookerEpubTool [-h] [-v] {comp,toc,ext-chs,ext-htmls,ext-pics,sel-nocd,fm
 | `fmt-para` | 格式化段落（合并过短的段） |
 | `mkds` | 将 EPUB 段落导出为 YAML 数据集 |
 | `add-title` | 为章节补写标题 |
+| `trans` | 翻译 EPUB（调用 GPT 模型） |
 
-每个子命令的完整参数可通过 `-h/--help` 查看。
+每个子命令的完整参数可通过 `-h/--help` 查看。`trans` 需要 OpenAI 兼容 API，公共参数（`-m` 模型、`-k` Key、`-H` 地址等）置于子命令之前，详见下文 `trans` 小节。
 
 ### comp：压缩 EPUB 图片
 
@@ -186,6 +187,34 @@ BookerEpubTool add-title example.epub
 | 参数 | 说明 | 默认值 |
 |---|---|---|
 | `fname` | EPUB 文件 | 必填 |
+
+### trans：翻译 EPUB
+
+调用 GPT 兼容模型把英文 EPUB 翻译为中文，按章节输出 Markdown。翻译过程分 8 步：初始化元数据 → 转换 HTML/MD → 导出图片 → 排版+翻译 → 修正目录 → 分章节 → 生成 README/SUMMARY。中间产物缓存到 `{书名}/asset/` 目录，已完成的步骤断点续跑不会重复消耗 API。
+
+```
+BookerEpubTool -m gpt-4o trans example.epub
+BookerEpubTool -m gpt-4o -H http://localhost:8000/v1 -k sk-xxx trans example.epub
+BookerEpubTool -m deepseek-chat trans -D --clean --split example.epub
+BookerEpubTool -m o3-mini trans -D --clean --split example.epub
+```
+
+| 参数 | 说明 | 默认值 |
+|---|---|---|
+| `fname` | EPUB 文件或目录；目录会递归选取其中全部 `.epub` | 必填 |
+| `-ft, --file-threads` | 文件线程数 | `1` |
+| `-pt, --page-threads` | 页面（分块）线程数 | `8` |
+| `-l, --limit` | 分块大小上限 | `8000` |
+| `-m, --fmt-mode` | 转换格式模式：`none` / `oreilly` / `packt` / `apress` | `none` |
+| `-D, --debug` | 调试模式（输出详细日志） | 关 |
+| `--split` | 是否用 GPT 识别章节边界并拆分为章 | 关 |
+| `--clean` | 是否用 GPT 清理版权页/目录等前置内容 | 关 |
+| `-sl, --split-limit` | 划分章节的分块大小上限 | `3000` |
+| `-so, --split-overlap` | 划分章节的分块重叠大小 | `50` |
+
+注意 `-m` 的双重语义：位于 `trans` 之前时是**模型名**（主命令参数），位于 `trans` 之后时是 `--fmt-mode`（子命令参数）。其余公共参数（`-k` Key、`-H` API 地址、`-tm` 温度、`-r` 重试等）同样须置于 `trans` 之前。
+
+示例：`BookerEpubTool -m qwen3-max trans -m oreilly example.epub` 表示用 qwen3-max 模型翻译、按 O'Reilly 格式预处理。
 
 ## 协议
 
