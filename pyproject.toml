@@ -44,6 +44,7 @@ requires-python = ">=3.8"
 dependencies = [
     "pyquery",
     "EpubCrawler",
+    "GenEpub",
     "imgyaso",
     "py7zr",
     "pyyaml",

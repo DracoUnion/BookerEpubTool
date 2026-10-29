@@ -46,6 +46,7 @@ def main():
     from .mkds import reg_subparser as reg_mkds
     from .title import reg_subparser as reg_title
     from .trans import reg_subparser as reg_trans
+    from .crawl import reg_subparser as reg_crawl
 
     reg_comp(subparsers)
     reg_toc(subparsers)
@@ -53,6 +54,7 @@ def main():
     reg_mkds(subparsers)
     reg_title(subparsers)
     reg_trans(subparsers)
+    reg_crawl(subparsers)
 
     args = parser.parse_args()
     args.func(args)

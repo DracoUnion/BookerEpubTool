@@ -1,0 +1,234 @@
+# -*- coding: utf-8 -*-
+import gc
+import os
+import re
+import logging
+import traceback
+from os import path
+from concurrent.futures import ThreadPoolExecutor
+from typing import *
+from .crawl_agent import CrawlAgent
+from .crawl_models import *
+from .util import to_kebab
+from .openai import logger as oai_logger
+from EpubCrawler.config import config as crawl_config
+from EpubCrawler.img import process_img as crawl_process_img, set_img_pool
+from GenEpub import gen_epub
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='[%(asctime)s][%(name)s][%(levelname)s] %(message)s'
+)
+logger = logging.getLogger(__name__)
+
+
+class CrawlOrchestrator:
+
+    def __init__(self, args):
+        self.args = args
+        self.agent = CrawlAgent(args)
+        self.imgs = {}
+        self.articles = []
+        self.page_pool = ThreadPoolExecutor(args.page_threads)
+        self.img_pool = ThreadPoolExecutor(args.img_threads)
+        set_img_pool(self.img_pool)
+        self._init_crawl_config()
+
+    def _init_crawl_config(self):
+        """同步 EpubCrawler 全局配置"""
+        args = self.args
+        crawl_config['headers'] = {'User-Agent': args.user_agent}
+        crawl_config['retry'] = args.http_retry
+        crawl_config['timeout'] = (
+            args.conn_timeout, args.read_timeout,
+        )
+        crawl_config['checkStatus'] = args.check_status
+        crawl_config['checkBlank'] = args.check_blank
+        crawl_config['wait'] = args.wait
+
+    def run(self):
+        args = self.args
+        logger.info(args)
+        self.step_fetch_index()
+        self.step_extract_toc()
+        self.step_crawl_chapters()
+        self.step_gen_epub()
+        gc.collect()
+        logger.info('[*] 完成')
+
+    # ── 步骤 ──────────────────────────────────
+
+    def step_fetch_index(self):
+        """[1] 抓取目录页"""
+        args = self.args
+        logger.info('[1] 抓取目录页')
+        self.index_html = self.agent.fetch(args.url)
+        self.name = self._extract_name(self.index_html)
+        logger.info(f'书名: {self.name}')
+
+    def _extract_name(self, html):
+        args = self.args
+        if args.name:
+            return args.name
+        m = re.search(r'<title[^>]*>(.*?)</title>', html, re.S | re.I)
+        if m and m.group(1).strip():
+            return m.group(1).strip()
+        return to_kebab(args.url) or 'book'
+
+    def step_extract_toc(self):
+        """[2] 提取目录"""
+        logger.info('[2] 提取目录')
+        anchors = self.agent.extract_anchors(
+            self.index_html, self.args.url
+        )
+        logger.info(f'候选链接: {len(anchors)}')
+        self.toc = self.agent.extract_toc(anchors)
+        self.toc = self._norm_toc(self.toc)
+        logger.info(f'章节数: {len(self.toc)}')
+
+    def _norm_toc(self, toc):
+        """按 no 排序、去重、补齐序号的目录列表"""
+        seen = set()
+        res = []
+        for it in sorted(toc, key=lambda x: x.no):
+            if it.no in seen:
+                continue
+            seen.add(it.no)
+            res.append(it)
+        return res
+
+    def step_crawl_chapters(self):
+        """[3] 并发抓取章节"""
+        logger.info('[3] 并发抓取章节')
+        hdls = {}
+        for i, item in enumerate(self.toc):
+            hdls[i] = self.page_pool.submit(
+                self._crawl_article_safe, i, item,
+            )
+        articles = [None] * len(hdls)
+        for i, h in hdls.items():
+            articles[i] = h.result()
+        self.articles = [a for a in articles if a]
+        self.imgs = {
+            k: v for k, v in self.imgs.items()
+            if v
+        }
+        logger.info(
+            f'成功: {len(self.articles)}/{len(hdls)}'
+        )
+
+    def _crawl_article_safe(self, i, item):
+        try:
+            return self._crawl_article(i, item)
+        except KeyboardInterrupt:
+            raise
+        except Exception:
+            logger.warn(
+                f'{i} <{item.title}> 抓取失败: '
+                + traceback.format_exc()
+            )
+            return None
+
+    def _crawl_article(self, i, item):
+        art = {'title': item.title, 'content': ''}
+        if not item.href:
+            return art
+        html = self.agent.fetch(item.href)
+        res = self.agent.extract_article(html, url=item.href)
+        art['title'] = res.title or item.title
+        art['content'] = crawl_process_img(
+            res.content or '',
+            self.imgs,
+            page_url=item.href,
+            img_prefix='../Images/',
+        )
+        return art
+
+    def step_gen_epub(self):
+        """[4] 生成 EPUB"""
+        logger.info('[4] 生成 EPUB')
+        args = self.args
+        if args.name:
+            articles = [{
+                'title': self.name,
+                'content': (
+                    f"<p>来源：<a href='{args.url}'>{args.url}</a></p>"
+                ),
+            }] + self.articles
+        else:
+            articles = self.articles
+        gen_epub(
+            articles, self.imgs,
+            name=self.name,
+            path=args.out,
+            limit=args.size_limit,
+        )
+        logger.info(f'输出: {args.out}')
+
+
+def crawl(args):
+    if args.debug:
+        logger.setLevel(logging.DEBUG)
+        oai_logger.setLevel(logging.DEBUG)
+    try:
+        CrawlOrchestrator(args).run()
+    except KeyboardInterrupt:
+        raise
+    except Exception:
+        logger.warn(traceback.format_exc())
+
+
+def reg_subparser(subparsers):
+    crawl_parser = subparsers.add_parser(
+        "crawl", help="抓取网页生成 EPUB"
+    )
+    crawl_parser.add_argument("url", help="书籍目录页 URL")
+    crawl_parser.add_argument(
+        "-o", "--out", default='',
+        help="输出 EPUB 文件路径（默认：<书名>.epub）"
+    )
+    crawl_parser.add_argument(
+        "-n", "--name", default='',
+        help="书名（默认取网页 <title>）"
+    )
+    crawl_parser.add_argument(
+        "-e", "--encoding", default='utf-8',
+        help="网页编码"
+    )
+    crawl_parser.add_argument(
+        "-pt", "--page-threads", type=int, default=8,
+        help="章节抓取线程数"
+    )
+    crawl_parser.add_argument(
+        "-it", "--img-threads", type=int, default=24,
+        help="图片下载线程数"
+    )
+    crawl_parser.add_argument(
+        "-hr", "--http-retry", type=int, default=10,
+        help="HTTP 请求重试次数"
+    )
+    crawl_parser.add_argument(
+        "-cs", "--check-status", action='store_true',
+        help="HTTP 请求检查状态码"
+    )
+    crawl_parser.add_argument(
+        "-cb", "--check-blank", action='store_true',
+        help="检查标题和正文是否为空"
+    )
+    crawl_parser.add_argument(
+        "-w", "--wait", type=float, default=0,
+        help="每次请求后的等待秒数"
+    )
+    crawl_parser.add_argument(
+        "-ml", "--max-len", type=int, default=20000,
+        help="传入大模型的正文 HTML 最大长度"
+    )
+    crawl_parser.add_argument(
+        "-sl", "--size-limit", default='50m',
+        help="EPUB 分卷大小上限"
+    )
+    crawl_parser.add_argument(
+        "-D", "--debug", action='store_true',
+        help="调试模式"
+    )
+    crawl_parser.set_defaults(func=crawl)
