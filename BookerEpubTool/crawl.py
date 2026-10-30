@@ -90,6 +90,7 @@ class CrawlOrchestrator:
         logger.info('[2] 提取目录')
         if self.args.url_list_file:
             urls = open(self.args.url_list_file, encoding='utf8').read().split('\n')
+            urls = [u for u in urls if u.strip()]
             logger.info(f'章节数: {len(urls)}')
             self.toc = [
                 TocItem(no=i+1, title='', href=url)
