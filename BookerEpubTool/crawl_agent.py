@@ -21,7 +21,6 @@ from .util import (
     md5,
 )
 from .openai import OpenAIClient
-import EpubCrawler
 
 
 class CrawlAgent:

@@ -10,7 +10,7 @@ from concurrent.futures import ThreadPoolExecutor
 from typing import *
 from .crawl_agent import CrawlAgent
 from .crawl_models import *
-from .util import to_kebab
+from .util import to_kebab, md5
 from .openai import logger as oai_logger
 from .crawl_img import config as crawl_config
 from .crawl_img import process_img as crawl_process_img, set_img_pool
@@ -140,11 +140,17 @@ class CrawlOrchestrator:
             return None
 
     def _crawl_article(self, i, item):
-        art = {'title': item.title, 'content': ''}
+        # 判断是否是纯标题章节
         if not item.href:
+            return {'title': item.title, 'content': ''}
+        # 读缓存
+        hash = md5(item.href)
+        art = self.load_article(hash)
+        if art and not self.args.no_cache:
             return art
         html = self.agent.fetch(item.href)
         res = self.agent.extract_article(html, url=item.href)
+        art = {}
         art['title'] = res.title or item.title
         art['content'] = crawl_process_img(
             res.content or '',
@@ -152,6 +158,7 @@ class CrawlOrchestrator:
             page_url=item.href,
             img_prefix='../Images/',
         )
+        self.save_article(hash, art)
         return art
 
     def step_gen_epub(self):
