@@ -325,3 +325,7 @@ def request_retry(method, url, retry=10, check_status=False, **kw):
         except Exception as e:
             print(f'{url} retry {i}')
             if i == retry - 1: raise e
+
+def prdict(pr):
+    return None if pr is None \
+           else {'http': pr, 'https': pr}

@@ -12,6 +12,7 @@ import traceback
 import tempfile
 from imgyaso import *
 from .util import *
+import EpubCrawler
 
 bundle_dir = tempfile.gettempdir()
 cache_dir = 'epubcralwer'
@@ -195,6 +196,12 @@ def load_img(hash, opti):
     else:
         return None
 
+def save_img(hash, opti, img): 
+    dir = path.join(bundle_dir, cache_dir)
+    os.makedirs(dir, exist_ok=True)
+    fname = path.join(dir, f'{hash}-{opti}.png')
+    open(fname, 'wb').write(img)
+
 def is_valid_img(data):
     return b'<svg ' in data or is_img_data(data)
 
@@ -205,3 +212,4 @@ def is_pic(fname):
     ]
     m = re.search(r'\.(\w+)$', fname.lower())
     return bool(m and m.group(1) in ext)
+    
