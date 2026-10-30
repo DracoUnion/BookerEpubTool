@@ -45,6 +45,9 @@ class CrawlOrchestrator:
         crawl_config['checkStatus'] = not args.no_check_status
         crawl_config['checkBlank'] = not args.no_check_blank
         crawl_config['wait'] = args.wait
+        crawl_config['optiMode'] = args.opti_mode
+        crawl_config['imgSrc'] = args.img_src.split(',')
+        crawl_config['credit'] = not args.no_credit
 
     def run(self):
         args = self.args
@@ -213,6 +216,18 @@ def reg_subparser(subparsers):
     crawl_parser.add_argument(
         "-w", "--wait", type=float, default=0,
         help="每次请求后的等待秒数"
+    )
+    crawl_parser.add_argument(
+        "-om", "--opti-mode", default='quant',
+        help="图像压缩方式"
+    )
+    crawl_parser.add_argument(
+        "-is", "--img-src", default='src',
+        help="图像 URL 属性名称，逗号分隔"
+    )
+    crawl_parser.add_argument(
+        "-CR", "--no-credit", action='store_true',
+        help="是否不添加原文链接"
     )
     crawl_parser.add_argument(
         "-ml", "--max-len", type=int, default=20000,
