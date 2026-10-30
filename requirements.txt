@@ -1,5 +1,4 @@
 pyquery
-EpubCrawler
 imgyaso
 py7zr
 pyyaml

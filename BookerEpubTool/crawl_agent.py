@@ -8,6 +8,7 @@ from urllib.parse import urljoin
 from pyquery import PyQuery as pq
 from pydantic import BaseModel, parse_obj_as
 from typing import *
+from .util import request_retry
 from .crawl_pmt import *
 from .crawl_models import *
 from .util import (
@@ -35,7 +36,6 @@ class CrawlAgent:
 
     def fetch(self, url: str) -> str:
         """抓取网页，返回 HTML 文本"""
-        from EpubCrawler.util import request_retry
         args = self.args
         r = request_retry(
             'GET', url,

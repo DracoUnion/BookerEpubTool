@@ -11,8 +11,8 @@ from .crawl_agent import CrawlAgent
 from .crawl_models import *
 from .util import to_kebab
 from .openai import logger as oai_logger
-from EpubCrawler.config import config as crawl_config
-from EpubCrawler.img import process_img as crawl_process_img, set_img_pool
+from .crawl_img import config as crawl_config
+from .crawl_img import process_img as crawl_process_img, set_img_pool
 from GenEpub import gen_epub
 
 logging.basicConfig(
