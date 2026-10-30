@@ -131,7 +131,7 @@ class CrawlAgent:
         )
         if not self.args.no_check_blank and \
            (res.title == '' or res.content == ''):
-           raise ValueError('标题或正文为空')
+            raise ValueError('标题或正文为空')
         write_yaml_model(cache_fname, res)
         return res
 
