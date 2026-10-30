@@ -160,10 +160,9 @@ class CrawlOrchestrator:
         gen_epub(
             articles, self.imgs,
             name=self.name,
-            path=args.out,
             limit=args.size_limit,
         )
-        logger.info(f'输出: {args.out}')
+        logger.info(f'输出: {args.name}.epub')
 
 
 def crawl(args):
@@ -183,10 +182,6 @@ def reg_subparser(subparsers):
         "crawl", help="抓取网页生成 EPUB"
     )
     crawl_parser.add_argument("url", help="书籍目录页 URL")
-    crawl_parser.add_argument(
-        "-o", "--out", default='',
-        help="输出 EPUB 文件路径（默认：<书名>.epub）"
-    )
     crawl_parser.add_argument(
         "-n", "--name", default='',
         help="书名（默认取网页 <title>）"
