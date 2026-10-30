@@ -179,14 +179,6 @@ def extname(fname):
     m = re.search(r'\.(\w+)$', fname.lower())
     return m.group(1) if m else ''
 
-def is_pic(fname):
-    ext = [
-        'jpg', 'jpeg', 'jfif', 'png',
-        'gif', 'tiff', 'webp'
-    ]
-    m = re.search(r'\.(\w+)$', fname.lower())
-    return bool(m and m.group(1) in ext)
-
 # ── GPT 翻译相关工具（自 BookerGptTool 迁移）──────────────────────
 
 def md5(text: str):
@@ -333,4 +325,3 @@ def request_retry(method, url, retry=10, check_status=False, **kw):
         except Exception as e:
             print(f'{url} retry {i}')
             if i == retry - 1: raise e
-

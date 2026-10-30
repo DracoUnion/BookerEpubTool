@@ -12,10 +12,10 @@ from concurrent.futures import ThreadPoolExecutor, as_completed, ProcessPoolExec
 from imgyaso.quant import pngquant
 from .trans_pmt import *
 from .tomd import tomd
+from .crawl_img import is_pic
 from .util import (
     to_kebab,
     read_zip,
-    is_pic,
     get_md_title,
     epub2html_pandoc,
     group_chunks,

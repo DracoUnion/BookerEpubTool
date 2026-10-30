@@ -1,7 +1,7 @@
 from os import path
 from imgyaso import pngquant_bts
 import sys
-from EpubCrawler.util import is_pic, safe_mkdir, safe_rmdir, opti_img
+from .crawl_img import is_pic, opti_img
 import subprocess as subp
 from pyquery import PyQuery as pq
 import re

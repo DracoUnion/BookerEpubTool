@@ -9,8 +9,12 @@ import re
 import base64
 import random
 import traceback
+import tempfile
+from imgyaso import *
 from .util import *
 
+bundle_dir = tempfile.gettempdir()
+cache_dir = 'epubcralwer'
 
 config = {
     'name': '',
@@ -164,7 +168,40 @@ def crawl_img_handle():
     print(fname)
     open(fname, 'w', encoding='utf8').write(html)
     img_dir = path.join(path.dirname(fname), 'img')
-    safe_mkdir(img_dir)
+    os.makedirs(img_dir, exist_ok=True)
     for iname, data in imgs.items():
         print(iname)
         open(path.join(img_dir, iname), 'wb').write(data)
+
+def opti_img(img, mode, colors):
+    if mode == 'quant':
+        return pngquant_bts(img, colors)
+    elif mode == 'grid':
+        return grid_bts(img)
+    elif mode == 'trunc':
+        return trunc_bts(img, colors)
+    elif mode == 'thres':
+        return adathres_bts(img)
+    else:
+        return img
+
+def load_img(hash, opti):
+    fname = path.join(bundle_dir, cache_dir, f'{hash}-{opti}.png')
+    if not path.isfile(fname):
+        return None
+    img = open(fname, 'rb').read()
+    if is_valid_img(img):
+        return img
+    else:
+        return None
+
+def is_valid_img(data):
+    return b'<svg ' in data or is_img_data(data)
+
+def is_pic(fname):
+    ext = [
+        'jpg', 'jpeg', 'jfif', 'png',
+        'gif', 'tiff', 'webp'
+    ]
+    m = re.search(r'\.(\w+)$', fname.lower())
+    return bool(m and m.group(1) in ext)
