@@ -38,6 +38,10 @@ class CrawlOrchestrator:
         """同步 EpubCrawler 全局配置"""
         args = self.args
         crawl_config['headers'] = {'User-Agent': args.user_agent}
+        if args.cookie:
+            crawl_config['headers']['Cookie'] = args.cookie
+        if args.referer:
+            crawl_config['headers']['Referer'] = args.referer
         crawl_config['retry'] = args.http_retry
         crawl_config['timeout'] = (
             args.conn_timeout, args.read_timeout,
