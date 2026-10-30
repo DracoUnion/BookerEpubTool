@@ -132,6 +132,10 @@ class CrawlAgent:
         if not self.args.no_check_blank and \
            (res.title == '' or res.content == ''):
             raise ValueError('标题或正文为空')
+        if not self.args.no_credit:
+            res.content = \
+                f'<blockquote>原文：<a href="{url}">' + \
+                f'{url}</a></blockquote>' + res.content
         write_yaml_model(cache_fname, res)
         return res
 
