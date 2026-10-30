@@ -222,7 +222,7 @@ def reg_subparser(subparsers):
         help="图像压缩方式"
     )
     crawl_parser.add_argument(
-        "-is", "--img-src", default='src',
+        "-is", "--img-src", default='data-src,data-original-src,src',
         help="图像 URL 属性名称，逗号分隔"
     )
     crawl_parser.add_argument(
