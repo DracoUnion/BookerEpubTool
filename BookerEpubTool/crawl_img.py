@@ -14,7 +14,7 @@ from imgyaso import *
 from .util import *
 
 bundle_dir = tempfile.gettempdir()
-cache_dir = 'epubcralwer'
+cache_dir = 'booker_crawl'
 
 config = {
     'name': '',
