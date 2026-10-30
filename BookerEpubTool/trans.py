@@ -338,7 +338,6 @@ def reg_subparser(subparsers):
     trans_parser.add_argument("-pt", "--page-threads", type=int, default=8, help="页面线程数")
     trans_parser.add_argument("-l", "--limit", type=int, default=8000, help="分块大小上限")
     trans_parser.add_argument("-m", "--fmt-mode", default='none', help="格式化模式")
-    trans_parser.add_argument("-D", "--debug", action='store_true', help="调试模式")
     trans_parser.add_argument("--split", action='store_true', help="是否拆分中文")
     trans_parser.add_argument("--clean", action='store_true', help="是否清理标题")
     trans_parser.add_argument("-sl", "--split-limit", type=int, default=3000, help="划分章节的分块大小上限")

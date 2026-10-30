@@ -285,8 +285,4 @@ def reg_subparser(subparsers):
         "-sl", "--size-limit", default='50m',
         help="EPUB 分卷大小上限"
     )
-    crawl_parser.add_argument(
-        "-D", "--debug", action='store_true',
-        help="调试模式"
-    )
     crawl_parser.set_defaults(func=crawl)

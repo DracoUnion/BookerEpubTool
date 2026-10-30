@@ -206,7 +206,7 @@ BookerEpubTool -m o3-mini trans -D --clean --split example.epub
 | `-pt, --page-threads` | 页面（分块）线程数 | `8` |
 | `-l, --limit` | 分块大小上限 | `8000` |
 | `-m, --fmt-mode` | 转换格式模式：`none` / `oreilly` / `packt` / `apress` | `none` |
-| `-D, --debug` | 调试模式（输出详细日志） | 关 |
+| `-D, --debug`（全局） | 调试模式（输出详细日志） | 关 |
 | `--split` | 是否用 GPT 识别章节边界并拆分为章 | 关 |
 | `--clean` | 是否用 GPT 清理版权页/目录等前置内容 | 关 |
 | `-sl, --split-limit` | 划分章节的分块大小上限 | `3000` |
