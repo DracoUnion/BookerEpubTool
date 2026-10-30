@@ -200,7 +200,7 @@ class CrawlOrchestrator:
             return None
             
     def save_article(self, hash, art):
-        os.makedirs(self.asset_dir)
+        os.makedirs(self.asset_dir, exist_ok=True)
         fname = path.join(self.asset_dir, f'{hash}.json')
         open(fname, 'w', encoding='utf-8').write(json.dumps(art))
 
