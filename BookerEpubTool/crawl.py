@@ -42,8 +42,8 @@ class CrawlOrchestrator:
         crawl_config['timeout'] = (
             args.conn_timeout, args.read_timeout,
         )
-        crawl_config['checkStatus'] = args.check_status
-        crawl_config['checkBlank'] = args.check_blank
+        crawl_config['checkStatus'] = not args.no_check_status
+        crawl_config['checkBlank'] = not args.no_check_blank
         crawl_config['wait'] = args.wait
 
     def run(self):
@@ -203,11 +203,11 @@ def reg_subparser(subparsers):
         help="HTTP 请求重试次数"
     )
     crawl_parser.add_argument(
-        "-cs", "--check-status", action='store_true',
+        "-CS", "--no-check-status", action='store_true',
         help="HTTP 请求检查状态码"
     )
     crawl_parser.add_argument(
-        "-cb", "--check-blank", action='store_true',
+        "-CB", "--no-check-blank", action='store_true',
         help="检查标题和正文是否为空"
     )
     crawl_parser.add_argument(

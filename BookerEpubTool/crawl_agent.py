@@ -40,7 +40,7 @@ class CrawlAgent:
         r = request_retry(
             'GET', url,
             retry=args.http_retry,
-            check_status=args.check_status,
+            check_status=not args.no_check_status,
             headers={'User-Agent': args.user_agent},
             timeout=(args.conn_timeout, args.read_timeout),
             verify=False,
@@ -129,6 +129,9 @@ class CrawlAgent:
         res: ArticleResult = self.llm.ask_chatgpt_retry(
             ques, self.args.model, self.args, parse_output,
         )
+        if not self.args.no_check_blank and \
+           (res.title == '' or res.content == ''):
+           raise ValueError('标题或正文为空')
         write_yaml_model(cache_fname, res)
         return res
 
