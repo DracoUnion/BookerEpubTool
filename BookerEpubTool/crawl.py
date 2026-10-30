@@ -2,6 +2,7 @@
 import gc
 import os
 import re
+import json
 import logging
 import traceback
 from os import path
@@ -27,6 +28,7 @@ class CrawlOrchestrator:
     def __init__(self, args):
         self.args = args
         self.agent = CrawlAgent(args)
+        self.asset_dir = self.agent.asset_dir
         self.imgs = {}
         self.articles = []
         self.page_pool = ThreadPoolExecutor(args.page_threads)
@@ -52,6 +54,7 @@ class CrawlOrchestrator:
         crawl_config['optiMode'] = args.opti_mode
         crawl_config['imgSrc'] = args.img_src.split(',')
         crawl_config['credit'] = not args.no_credit
+        crawl_config['cache'] = not args.no_cache
 
     def run(self):
         args = self.args
@@ -172,6 +175,28 @@ class CrawlOrchestrator:
         logger.info(f'输出: {args.name}.epub')
 
 
+    def load_article(self, hash):
+        fname = path.join(self.asset_dir, f'{hash}.json')
+        if not path.isfile(fname):
+            return None
+        try:
+            art = json.loads(open(fname, encoding='utf8').read())
+        except Exception as ex: 
+            print(ex)
+            return None
+            
+        if isinstance(art, dict) and \
+            art.get('title', '') and \
+            art.get('content', ''):
+            return art
+        else:
+            return None
+            
+    def save_article(self, hash, art):
+        os.makedirs(self.asset_dir)
+        fname = path.join(self.asset_dir, f'{hash}.json')
+        open(fname, 'w', encoding='utf-8').write(json.dumps(art))
+
 def crawl(args):
     if args.debug:
         logger.setLevel(logging.DEBUG)
@@ -240,6 +265,10 @@ def reg_subparser(subparsers):
     crawl_parser.add_argument(
         "-CR", "--no-credit", action='store_true',
         help="是否不添加原文链接"
+    )
+    crawl_parser.add_argument(
+        "-CC", "--no-cache", action='store_true',
+        help="是否不读取缓存"
     )
     crawl_parser.add_argument(
         "-ml", "--max-len", type=int, default=20000,

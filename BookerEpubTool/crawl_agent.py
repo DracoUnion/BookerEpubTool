@@ -7,6 +7,7 @@ from os import path
 from urllib.parse import urljoin
 from pyquery import PyQuery as pq
 from pydantic import BaseModel, parse_obj_as
+import json
 from typing import *
 from .util import request_retry
 from .crawl_pmt import *
@@ -20,6 +21,7 @@ from .util import (
     md5,
 )
 from .openai import OpenAIClient
+import EpubCrawler
 
 
 class CrawlAgent:
