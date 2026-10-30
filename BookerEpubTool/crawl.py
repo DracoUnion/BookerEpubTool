@@ -88,6 +88,15 @@ class CrawlOrchestrator:
     def step_extract_toc(self):
         """[2] 提取目录"""
         logger.info('[2] 提取目录')
+        if self.args.url_list_file:
+            urls = open(self.args.url_list_file, encoding='utf8').read().split('\n')
+            logger.info(f'章节数: {len(urls)}')
+            self.toc = [
+                TocItem(no=i+1, title='', href=url)
+                for i, url in enumerate(urls)
+            ]
+            return
+
         anchors = self.agent.extract_anchors(
             self.index_html, self.args.url
         )
@@ -284,5 +293,9 @@ def reg_subparser(subparsers):
     crawl_parser.add_argument(
         "-sl", "--size-limit", default='50m',
         help="EPUB 分卷大小上限"
+    )
+    crawl_parser.add_argument(
+        "-ul", "--url-list-file", default='',
+        help="URL 列表文件，用于手动指定目录"
     )
     crawl_parser.set_defaults(func=crawl)
