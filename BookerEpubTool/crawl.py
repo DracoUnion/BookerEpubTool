@@ -204,11 +204,11 @@ def reg_subparser(subparsers):
     )
     crawl_parser.add_argument(
         "-CS", "--no-check-status", action='store_true',
-        help="HTTP 请求检查状态码"
+        help="不检查 HTTP 请求状态码"
     )
     crawl_parser.add_argument(
         "-CB", "--no-check-blank", action='store_true',
-        help="检查标题和正文是否为空"
+        help="不检查标题和正文是否为空"
     )
     crawl_parser.add_argument(
         "-w", "--wait", type=float, default=0,
