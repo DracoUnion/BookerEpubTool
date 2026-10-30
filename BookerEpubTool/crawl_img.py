@@ -12,7 +12,6 @@ import traceback
 import tempfile
 from imgyaso import *
 from .util import *
-import EpubCrawler
 
 bundle_dir = tempfile.gettempdir()
 cache_dir = 'epubcralwer'
