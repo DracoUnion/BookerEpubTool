@@ -37,11 +37,16 @@ class CrawlAgent:
     def fetch(self, url: str) -> str:
         """抓取网页，返回 HTML 文本"""
         args = self.args
+        hdrs = {'User-Agent': args.user_agent}
+        if args.cookie:
+            hdrs['Cookie'] = args.cookie
+        if args.referer:
+            hdrs['Referer'] = args.referer
         r = request_retry(
             'GET', url,
             retry=args.http_retry,
             check_status=not args.no_check_status,
-            headers={'User-Agent': args.user_agent},
+            headers=hdrs,
             timeout=(args.conn_timeout, args.read_timeout),
             verify=False,
         )

@@ -226,6 +226,14 @@ def reg_subparser(subparsers):
         help="图像 URL 属性名称，逗号分隔"
     )
     crawl_parser.add_argument(
+        "-ck", "--cookie", default='',
+        help="Cookie"
+    )
+    crawl_parser.add_argument(
+        "-rf", "--referer", default='',
+        help="Referer"
+    )
+    crawl_parser.add_argument(
         "-CR", "--no-credit", action='store_true',
         help="是否不添加原文链接"
     )
