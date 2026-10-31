@@ -187,8 +187,10 @@ class CrawlOrchestrator:
         hash = md5(item.href)
         art = self.load_article(hash)
         if art and not self.args.no_cache:
+            logger.info(f'[3] {item.href} 已存在于本地缓存中')
             return art
         html = self.agent.fetch(item.href)
+        logger.info(f'[3] {item.href} 下载成功')
         art = {}
         if self.args.llm:
             res = self.agent.extract_article(html, url=item.href)
