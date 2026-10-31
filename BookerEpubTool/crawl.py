@@ -299,4 +299,16 @@ def reg_subparser(subparsers):
         "-ul", "--url-list-file", default='',
         help="URL 列表文件，用于手动指定目录"
     )
+    crawl_parser.add_argument(
+        "--llm", action='store_true',
+        help="强制使用 LLM 提取正文和标题"
+    )
+    crawl_parser.add_argument(
+        "-tl",  "--title", default='',
+        help="标题选择器（默认为 <title>）"
+    )
+    crawl_parser.add_argument(
+        "-co",  "--content", default='',
+        help="内容选择器（默认用 readbility 自动识别）"
+    )
     crawl_parser.set_defaults(func=crawl)
