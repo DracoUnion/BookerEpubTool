@@ -141,7 +141,7 @@ class CrawlOrchestrator:
 
     def _crawl_article_safe(self, i, item):
         try:
-            return self._crawl_article_retry(i, item)
+            return self._crawl_article_retry(i, item, self.args.http_retry)
         except KeyboardInterrupt:
             raise
         except Exception:
