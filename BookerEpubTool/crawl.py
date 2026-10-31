@@ -5,6 +5,8 @@ import re
 import json
 import logging
 import traceback
+from pyquery import PyQuery as pq
+import readability
 from os import path
 from concurrent.futures import ThreadPoolExecutor
 from typing import *
@@ -159,11 +161,24 @@ class CrawlOrchestrator:
         if art and not self.args.no_cache:
             return art
         html = self.agent.fetch(item.href)
-        res = self.agent.extract_article(html, url=item.href)
         art = {}
-        art['title'] = res.title or item.title
+        if self.args.llm:
+            res = self.agent.extract_article(html, url=item.href)
+            art['title'] = res.title or item.title
+            art['content'] = res.content or ''
+        else:
+            rt = pq(html)
+            el_title = rt.find(self.args.title).eq(0)
+            art['title'] = (el_title.text() or '').strip()
+            el_title.remove()
+            art['content'] = (
+                rt.find(self.args.content).html() or ''
+                if self.args.content
+                else readability.Document(html)
+                    .summary(html_partial=True)
+            )
         art['content'] = crawl_process_img(
-            res.content or '',
+            art['content'],
             self.imgs,
             page_url=item.href,
             img_prefix='../Images/',
@@ -304,7 +319,7 @@ def reg_subparser(subparsers):
         help="强制使用 LLM 提取正文和标题"
     )
     crawl_parser.add_argument(
-        "-tl",  "--title", default='',
+        "-tl",  "--title", default='title',
         help="标题选择器（默认为 <title>）"
     )
     crawl_parser.add_argument(
