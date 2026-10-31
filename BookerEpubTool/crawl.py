@@ -161,6 +161,22 @@ class CrawlOrchestrator:
                 traceback.print_exc()
                 if i == retry - 1: raise
 
+    def _ext_title_content(self, html):
+        rt = pq(html)
+        el_title = rt.find(self.args.title).eq(0)
+        title = (el_title.text() or '').strip()
+        el_title.remove()
+        content = (
+            rt.find(self.args.content).html() or ''
+            if self.args.content
+            else readability.Document(html)
+                .summary(html_partial=True)
+        )
+        if not self.args.no_check_blank and \
+            (title == '' or content == ''):
+            raise ValueError('标题或正文为空')
+        return title, content
+
     def _crawl_article(self, i, item):
         logger.info(f'[3] {item.href or item.title}')
         # 判断是否是纯标题章节
@@ -178,19 +194,7 @@ class CrawlOrchestrator:
             art['title'] = res.title or item.title
             art['content'] = res.content or ''
         else:
-            rt = pq(html)
-            el_title = rt.find(self.args.title).eq(0)
-            art['title'] = (el_title.text() or '').strip()
-            el_title.remove()
-            art['content'] = (
-                rt.find(self.args.content).html() or ''
-                if self.args.content
-                else readability.Document(html)
-                    .summary(html_partial=True)
-            )
-            if not self.args.no_check_blank and \
-               (art['title'] == '' or art['content'] == ''):
-                raise ValueError('标题或正文为空')
+            art['title'], art['content'] = self._ext_title_content(html)
         art['content'] = crawl_process_img(
             art['content'],
             self.imgs,
