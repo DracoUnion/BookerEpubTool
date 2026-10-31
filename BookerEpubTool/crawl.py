@@ -141,7 +141,7 @@ class CrawlOrchestrator:
 
     def _crawl_article_safe(self, i, item):
         try:
-            return self._crawl_article(i, item)
+            return self._crawl_article_retry(i, item)
         except KeyboardInterrupt:
             raise
         except Exception:
@@ -150,6 +150,16 @@ class CrawlOrchestrator:
                 + traceback.format_exc()
             )
             return None
+
+    def _crawl_article_retry(self, idx, item, retry=10):
+        for i in range(retry):
+            try:
+                return self._crawl_article(idx, item)
+            except KeyboardInterrupt:
+                raise
+            except:
+                traceback.print_exc()
+                if i == retry - 1: raise
 
     def _crawl_article(self, i, item):
         logger.info(f'[3] {item.href or item.title}')
@@ -178,6 +188,9 @@ class CrawlOrchestrator:
                 else readability.Document(html)
                     .summary(html_partial=True)
             )
+            if not self.args.no_check_blank and \
+               (art['title'] == '' or art['content'] == ''):
+                raise ValueError('标题或正文为空')
         art['content'] = crawl_process_img(
             art['content'],
             self.imgs,
