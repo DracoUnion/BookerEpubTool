@@ -55,6 +55,7 @@ dependencies = [
     "pyturndown",
     "ctx-compact",
     "tqdm",
+    "jinja2",
 ]
 
 [project.optional-dependencies]

@@ -2,3 +2,4 @@ pyquery
 imgyaso
 py7zr
 pyyaml
+jinja2

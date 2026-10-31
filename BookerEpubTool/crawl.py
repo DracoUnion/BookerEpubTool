@@ -16,7 +16,7 @@ from .util import to_kebab, md5
 from .openai import logger as oai_logger
 from .crawl_img import config as crawl_config
 from .crawl_img import process_img as crawl_process_img, set_img_pool
-from GenEpub import gen_epub
+from .gen_epub import gen_epub
 
 logging.basicConfig(
     level=logging.INFO,
@@ -82,10 +82,11 @@ class CrawlOrchestrator:
         args = self.args
         if args.name:
             return args.name
-        m = re.search(r'<title[^>]*>(.*?)</title>', html, re.S | re.I)
-        if m and m.group(1).strip():
-            return m.group(1).strip()
-        return to_kebab(args.url) or 'book'
+        title = (
+            pq(html).find('title').eq(0).text() or ''
+        ).strip()
+        if title: return title
+        return to_kebab(args.url)
 
     def step_extract_toc(self):
         """[2] 提取目录"""
