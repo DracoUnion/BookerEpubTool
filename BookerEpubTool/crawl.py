@@ -152,6 +152,7 @@ class CrawlOrchestrator:
             return None
 
     def _crawl_article(self, i, item):
+        logger.info(f'[3] {item.href or item.title}')
         # 判断是否是纯标题章节
         if not item.href:
             return {'title': item.title, 'content': ''}
