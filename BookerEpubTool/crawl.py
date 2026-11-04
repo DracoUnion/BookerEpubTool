@@ -347,4 +347,8 @@ def reg_subparser(subparsers):
         "-co",  "--content", default='',
         help="内容选择器（默认用 readbility 自动识别）"
     )
+    crawl_parser.add_argument(
+        "--trans", action='store_true',
+        help="是否翻译成中文"
+    )
     crawl_parser.set_defaults(func=crawl)

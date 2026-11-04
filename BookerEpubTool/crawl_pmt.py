@@ -60,3 +60,48 @@ EXTRACT_ARTICLE_PMT = '''
 {html}
 ```
 '''
+
+TRANS_HTML_PMT = '''
+假设你是一个高级文档工程师和翻译员，请参考注意事项和示例，将给定英文 HTML 文本翻译成中文。
+
+## 注意事项
+
+-   粗体（<b>bold</b>）和斜体（<i>itatic</i>）需要翻译翻译内容并保留符号。
+-   内联代码（<code>code</code>）和代码块不需要翻译。
+-   链接（<a href='https://example.org'>link</a>）需要翻译其内容，但保留网址。
+-   列表，表格，引用块保留格式，翻译内容
+-   原文可能有多行，不要漏掉任何一行，并且注意一定不要重复输出原文！！！
+-   输出应包含在“[content]...[/content]”中
+
+## 示例
+
+原文：
+
+[content]
+<ul><li><a href='https://wiki.example.org/feynmans_learning_method'>Feynman's learning method</a> is inspired by <b>Richard Feynman</b>, the Nobel Prize winner in physics. </li></ul>
+
+<ol><li>With Feynman's skills, you can understand the knowledge points in depth in just <code>20 min</code>, and it is memorable and <i>hard to forget</i>. </li></ol>
+
+<pre><code>
+if (condVar > someVal) {console.log("xxx")}
+</code></pre>
+[/content]
+
+译文：
+
+[content]
+<ul><li><a href='https://wiki.example.org/feynmans_learning_method'>费曼学习法</a>的灵感源于诺贝尔物理奖获得者<b>理查德·费曼</b>。</li></ul>
+
+<ol><li>运用费曼技巧，你只需花上<code>20 min</code>就能深入理解知识点，而且记忆深刻，<i>难以遗忘</i>。</li></ol>
+
+<pre><code>
+if (condVar > someVal) {console.log("xxx")}
+</code></pre>
+[/content]
+
+## 以下是需要翻译的文本
+
+[content]
+{text}
+[/content]
+'''
