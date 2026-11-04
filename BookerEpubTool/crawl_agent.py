@@ -19,6 +19,9 @@ from .util import (
     read_yaml_model,
     write_yaml_model,
     md5,
+    ext_cont_block,
+    read_text,
+    write_text,
 )
 from .openai import OpenAIClient
 
@@ -158,3 +161,18 @@ class CrawlAgent:
             model,
             json_repair.loads(ext_code_block(ans)),
         )
+
+    def translate_body(self, text: str) -> str:
+        cache_fname = path.join(
+            self.asset_dir,
+            'trans_' + gen_objs_md5(text) + '.html'
+        )
+        r = read_text(cache_fname)
+        if r: return r
+        ques = render_prompt(TRANS_HTML_PMT, text=text)
+        res = self.llm.ask_chatgpt_retry(
+            ques, self.args.model, self.args,
+            parse_output=ext_cont_block,
+        )
+        write_text(cache_fname, res)
+        return res
