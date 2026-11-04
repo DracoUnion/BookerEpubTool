@@ -162,7 +162,7 @@ class CrawlAgent:
             json_repair.loads(ext_code_block(ans)),
         )
 
-    def translate_body(self, text: str) -> str:
+    def translate_html(self, text: str) -> str:
         cache_fname = path.join(
             self.asset_dir,
             'trans_' + gen_objs_md5(text) + '.html'
