@@ -206,7 +206,7 @@ class CrawlOrchestrator:
         )
         if self.args.trans:
             title, cont = art['title'], art['content']
-            art_html = f'<h1>{title}<h1>{cont}'
+            art_html = f'<h1>{title}</h1>{cont}'
             trans = self.agent.translate_html(art_html)
             rt = pq(trans)
             el_title = rt('h1').eq(0)
