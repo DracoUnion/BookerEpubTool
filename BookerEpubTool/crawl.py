@@ -204,6 +204,16 @@ class CrawlOrchestrator:
             page_url=item.href,
             img_prefix='../Images/',
         )
+        if self.args.trans:
+            title, cont = art['title'], art['content']
+            art_html = f'<h1>{title}<h1>{cont}'
+            trans = self.agent.translate_html(art_html)
+            rt = pq(trans)
+            el_title = rt('h1').eq(0)
+            title = el_title.text().strip()
+            el_title.remove()
+            cont = str(rt)
+            art['title'], art['content'] = title, cont
         self.save_article(hash, art)
         return art
 
