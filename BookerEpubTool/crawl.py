@@ -109,14 +109,14 @@ class CrawlOrchestrator:
         self.toc = self._norm_toc(self.toc)
         logger.info(f'章节数: {len(self.toc)}')
 
-    def _norm_toc(self, toc):
-        """按 no 排序、去重、补齐序号的目录列表"""
+    def _norm_toc(self, toc: List[TocItem]):
+        """去重、补齐序号的目录列表"""
         seen = set()
         res = []
-        for it in sorted(toc, key=lambda x: x.no):
-            if it.no in seen:
+        for it in toc:
+            if it.href in seen:
                 continue
-            seen.add(it.no)
+            seen.add(it.href)
             res.append(it)
         return res
 

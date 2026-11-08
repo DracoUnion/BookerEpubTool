@@ -22,6 +22,7 @@ from .util import (
     ext_cont_block,
     read_text,
     write_text,
+    json_dump_model
 )
 from .openai import OpenAIClient
 
@@ -93,10 +94,7 @@ class CrawlAgent:
         res = read_yaml_model(cache_fname, List[TocItem])
         if res is not None:
             return res
-        lines = '\n'.join([
-            f'{a.no}\t{a.text}\t{a.href}'
-            for a in anchors
-        ])
+        lines = json_dump_model(anchors)
         ques = render_prompt(EXTRACT_TOC_PMT, anchors=lines)
         parse_output = lambda s: self._parse_list(s, TocItem)
         res: List[TocItem] = self.llm.ask_chatgpt_retry(
