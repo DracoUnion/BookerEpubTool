@@ -334,7 +334,7 @@ def reg_subparser(subparsers):
         help="是否不读取缓存"
     )
     crawl_parser.add_argument(
-        "-ml", "--max-len", type=int, default=50000,
+        "-ml", "--max-len", type=int, default=200000,
         help="传入大模型的正文 HTML 最大长度"
     )
     crawl_parser.add_argument(
