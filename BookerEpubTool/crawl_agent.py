@@ -105,7 +105,7 @@ class CrawlAgent:
             'toc_' + gen_objs_md5(anchors) + '.yaml'
         )
         res = read_yaml_model(cache_fname, List[TocItem])
-        if res is not None:
+        if not self.args.no_cache and res is not None:
             return res
         lines = json_dump_model(anchors)
         ques = render_prompt(EXTRACT_TOC_PMT, anchors=lines)
@@ -140,7 +140,7 @@ class CrawlAgent:
                 'art_' + gen_objs_md5(html) + '.yaml'
             )
         res = read_yaml_model(cache_fname, ArticleResult)
-        if res is not None:
+        if not self.args.no_cache and res is not None:
             return res
         html = self.clean_html(html)
         if self.args.max_len and len(html) > self.args.max_len:
