@@ -55,7 +55,7 @@ dependencies = [
     "ctx-compact",
     "tqdm",
     "jinja2",
-    "readbility",
+    "readbility-lxml",
 ]
 
 [project.optional-dependencies]
