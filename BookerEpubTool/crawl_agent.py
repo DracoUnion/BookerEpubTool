@@ -91,7 +91,7 @@ class CrawlAgent:
         res = []
         for it in toc:
             # 去除 HashTag
-            it.href = re.sub(r'#.+', '', it.href)
+            it.href = re.sub(r'#.*$', '', it.href)
             if it.href in seen:
                 continue
             seen.add(it.href)
