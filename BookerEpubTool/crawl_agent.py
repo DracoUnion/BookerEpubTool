@@ -85,6 +85,19 @@ class CrawlAgent:
                 break
         return anchors
 
+    def _norm_toc(self, toc: List[TocItem]):
+        """去重、补齐序号的目录列表"""
+        seen = set()
+        res = []
+        for it in toc:
+            # 去除 HashTag
+            it.href = re.sub(r'#.+', '', it.href)
+            if it.href in seen:
+                continue
+            seen.add(it.href)
+            res.append(it)
+        return res
+
     def extract_toc(self, anchors: List[AnchorLink]) -> List[TocItem]:
         """用大模型从候选链接中提取章节目录"""
         cache_fname = path.join(
@@ -100,6 +113,7 @@ class CrawlAgent:
         res: List[TocItem] = self.llm.ask_chatgpt_retry(
             ques, self.args.model, self.args, parse_output,
         )
+        res = self._norm_toc(res)
         write_yaml_model(cache_fname, res)
         return res
 

@@ -106,19 +106,7 @@ class CrawlOrchestrator:
         )
         logger.info(f'候选链接: {len(anchors)}')
         self.toc = self.agent.extract_toc(anchors)
-        self.toc = self._norm_toc(self.toc)
         logger.info(f'章节数: {len(self.toc)}')
-
-    def _norm_toc(self, toc: List[TocItem]):
-        """去重、补齐序号的目录列表"""
-        seen = set()
-        res = []
-        for it in toc:
-            if it.href in seen:
-                continue
-            seen.add(it.href)
-            res.append(it)
-        return res
 
     def step_crawl_chapters(self):
         """[3] 并发抓取章节"""
